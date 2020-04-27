@@ -9,7 +9,20 @@
 from optparse import OptionParser
 
 def main():
-    pass
+    get_input = getInput()
+
+    options = get_input[0]
+    arguments = get_input[1]
+    
+    try:
+        size = int(options.size)
+        instances = int(options.instances)
+
+        print(f"Specified size: {size}")
+        print(f"Number of instances to generate: {instances}")
+    
+    except:
+        print("Use 'instance_generator -h' to get information of use.")
 
 def output():
     pass
@@ -18,10 +31,10 @@ def getInput():
     parser = OptionParser()
     parser.add_option("-s", "--size",
                       dest="size",
-                      help="Size of the set of each instance to generate.")
+                      help="INT value - Size of the set of each instance to generate.")
     parser.add_option("-i", "--instances",
                       dest="instances",
-                      help="Number of instances to generate.")
+                      help="INT value - Number of instances to generate.")
     (options, args) = parser.parse_args()
 
     return options, args
