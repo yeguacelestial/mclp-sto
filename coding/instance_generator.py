@@ -24,14 +24,16 @@ def main():
     except:
         print("Use 'instance_generator -h' to get information of use.")
 
+
 def output():
     pass
+
 
 def getInput():
     parser = OptionParser()
     parser.add_option("-s", "--size",
                       dest="size",
-                      help="INT value - Size of the set of each instance to generate.")
+                      help="INT value - Size of population to generate on each instance.")
     parser.add_option("-i", "--instances",
                       dest="instances",
                       help="INT value - Number of instances to generate.")
