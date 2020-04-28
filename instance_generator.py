@@ -77,7 +77,7 @@ def generate(size, instances, filenames):
 def create_excel(filename):
     wb = Workbook()
     ws = wb.active
-    ws.title = "MCLP Instance data"
+    ws.title = f"MCLP Instance data"
     wb.save(filename=f'instances/{filename}')
 
 

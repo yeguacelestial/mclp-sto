@@ -13,9 +13,10 @@
 
 import os
 from os import listdir
-from pathlib import Path
-import time
 from optparse import OptionParser
+import time
+import openpyxl
+from openpyxl import load_workbook
 
 
 def main():
@@ -31,15 +32,15 @@ def main():
     instances_directory = options.directory
     instances_directory_list = sorted_ls(instances_directory)
     
+    # Read each instance file
+    for instance in instances_directory_list:
+        file = f'{instances_directory}/{instance}'
+        read_data(file)
+
 
     # END OF THE CODE
     time_elapsed = time.clock() - time_start
     print(f"Elapsed time: {time_elapsed}s")
-
-
-def sorted_ls(path):
-    mtime = lambda f: os.stat(os.path.join(path, f)).st_mtime
-    return list(sorted(os.listdir(path), key=mtime))
 
 
 def getInput():
@@ -56,6 +57,30 @@ def getInput():
     (options, args) = parser.parse_args()
 
     return options, args
+
+
+def sorted_ls(path):
+    mtime = lambda f: os.stat(os.path.join(path, f)).st_mtime
+    return list(sorted(os.listdir(path), key=mtime))
+
+
+def read_data(file):
+    workbook = load_workbook(f'{file}')
+    sheet = workbook.active
+    
+    i_column = sheet['A']
+    x_column = sheet['B']
+    y_column = sheet['C']
+
+    # Get i, x and y from each row
+    coordinates_list = []
+
+    for row in sheet.iter_rows(min_row=sheet.min_row, max_row=sheet.max_row):
+        coordinates_list.append((row[0].value,row[1].value,row[2].value))
+
+    print(coordinates_list)
+
+    return
 
 
 if __name__ == '__main__':
