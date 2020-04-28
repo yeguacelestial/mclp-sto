@@ -78,12 +78,12 @@ def create_excel(filename):
     wb = Workbook()
     ws = wb.active
     ws.title = "MCLP Instance data"
-    wb.save(filename=f'instances\{filename}')
+    wb.save(filename=f'instances/{filename}')
 
 
 def write_excel(filename, data):
     # Load excel file
-    workbook = load_workbook(f'instances\{filename}')
+    workbook = load_workbook(f'instances/{filename}')
     sheet = workbook.get_sheet_by_name("MCLP Instance data")
     sheet['A1'] = 'i'
     sheet['B1'] = 'x'
@@ -104,7 +104,7 @@ def write_excel(filename, data):
             # y:
             sheet.cell(row=row+2, column=3).value = data[row][1]
 
-    workbook.save(f'instances\{filename}')
+    workbook.save(f'instances/{filename}')
 
 
 if __name__ == '__main__':
