@@ -75,7 +75,7 @@ def read_data(file):
     # Get i, x and y from each row
     coordinates_list = []
 
-    for row in sheet.iter_rows(min_row=sheet.min_row, max_row=sheet.max_row):
+    for row in sheet.iter_rows(min_row=sheet.min_row+1, max_row=sheet.max_row+1):
         coordinates_list.append((row[0].value,row[1].value,row[2].value))
 
     print(coordinates_list)
