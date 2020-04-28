@@ -10,8 +10,16 @@
 # * Execution time of the Local Search Heuristic -> cpu_sec_ls
 # TODO: Constructive Heuristic
 
+import time
+
 def main():
-    pass
+    time_start = time.clock()
+    # START OF THE CODE
+    time.sleep(2)
+    # END OF THE CODE
+    time_elapsed = float(time.clock() - time_start)
+    print(f"Execution time: {time_elapsed}s")
+
 
 if __name__ == '__main__':
     main()
