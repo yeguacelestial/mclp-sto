@@ -1,17 +1,10 @@
-# INPUT:
+# *** INPUT:
 # * Instance >> coord
 # * Number of sites to select >> S
 # * Service radius of each site >> radius
 # * Desired population to cover >> M
-#
-# OUTPUT:
-# * Objective function of Constructive Heuristic -> Total of the population covered
-# * Execution time of the Constructive Heuristic -> cpu_sec_ch
-# * Objective function of Local Search Heuristic -> Total of the population covered IMPROVED
-# * Execution time of the Local Search Heuristic -> cpu_sec_ls
-
-# TODO: Generate objective functions matrix
-# TODO: Constructive Heuristic:
+# *********************************************
+# *** Constructive Heuristic:
 #           * Create empty solution -> sites = [] 
 #           * Generate all candidate sites under specified radius
 #           * Evaluate objective function of these sites -> sites_OF = [of-1, of-2,...,of-n]
@@ -21,7 +14,17 @@
 #               else:
 #                   end for loop
 #           * Return sites
+# *********************************************
+# *** OUTPUT:
+# * Objective function of Constructive Heuristic -> Total of the population covered
+# * Execution time of the Constructive Heuristic -> cpu_sec_ch
+# * Objective function of Local Search Heuristic -> Total of the population covered IMPROVED
+# * Execution time of the Local Search Heuristic -> cpu_sec_ls
 
+# TODO: Generate sites given coordinates
+# TODO: Generate objective functions matrix
+
+import numpy as np
 import os
 from os import listdir
 from optparse import OptionParser
@@ -42,6 +45,10 @@ def main():
     # Instances directory
     try:
         instances_directory = options.directory
+        number_of_sites = int(options.sites)
+        radius = float(options.radius)
+
+        # Sort excel files by modified date
         instances_directory_list = sorted_ls(instances_directory)
 
         # Read each instance file
@@ -52,13 +59,20 @@ def main():
             print(coordinates_list)
 
     except NotADirectoryError as e:
+        number_of_sites = int(options.sites)
+        radius = float(options.radius)
         instance = options.directory
+
         print(f"[*] Working with instance {instance}...")
         coordinates_list = read_data(instance)
-        print(coordinates_list)
+        generate_candidate_sites(coordinates_list, radius)
     
     except FileNotFoundError:
         print("[-] Error: File not found.")
+    
+    except Exception as e:
+        raise
+        #print("[-] Error: something went wrong.")
 
 
     # END OF THE CODE
@@ -101,16 +115,53 @@ def read_data(file):
     for row in sheet.iter_rows(min_row=sheet.min_row+1, max_row=sheet.max_row):
         coordinates_list.append((row[0].value,row[1].value,row[2].value))
 
-    print(coordinates_list)
-
     return coordinates_list
 
 
-def generate_sites(coordinates, S):
-    # coordinates => List of coordinates to work on
-    # S => Number of sites to generate
+def generate_candidate_sites(coordinates, S):
+    # Generate candidate sites inside a convex hull of given coordinates
+    # INPUT:
+    #   coordinates => List of coordinates to work on
+    #   S => Number of sites to generate
+    # RETURN:
+    #   candidate_sites list
 
-    return
+    # Create a copy of coordinates without index
+    coordinates_xy = [] 
+    for coordinate in coordinates:
+        coordinates_xy.append(coordinate[1:])
+
+    coordinates = coordinates_xy[:]
+
+    # From array to numpy array
+    coordinates = np.array(coordinates)
+
+    # Create convex hull
+    from scipy.spatial import ConvexHull
+    hull = ConvexHull(coordinates)
+
+    # Create polygon points
+    polygon_points = coordinates[hull.vertices]
+    from shapely.geometry import Polygon
+    poly = Polygon(polygon_points)
+
+    # Min and max coordinates bounds
+    min_x, min_y, max_x, max_y = poly.bounds
+
+    # Generate candidate sites
+    from shapely.geometry import Point
+    from numpy import random
+
+    # Constructive heuristic
+    sites = []
+    while len(sites) < S:
+        random_point = Point([random.uniform(min_x, max_x),
+                              random.uniform(min_y,max_y)])
+        if (random_point.within(poly)):
+            sites.append(random_point)
+
+    sites_coordinates = np.array([(site.x,site.y) for site in sites])
+    return sites_coordinates
 
 def mclp(coord, S, radius, M):
     # coord => Coordinates
