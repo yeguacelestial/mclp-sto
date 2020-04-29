@@ -21,7 +21,6 @@
 # * Objective function of Local Search Heuristic -> Total of the population covered IMPROVED
 # * Execution time of the Local Search Heuristic -> cpu_sec_ls
 
-# TODO: Generate sites given coordinates
 # TODO: Generate objective functions matrix
 
 import numpy as np
@@ -161,6 +160,7 @@ def generate_candidate_sites(coordinates, S):
             sites.append(random_point)
 
     sites_coordinates = np.array([(site.x,site.y) for site in sites])
+    print(sites_coordinates)
     return sites_coordinates
 
 def mclp(coord, S, radius, M):
