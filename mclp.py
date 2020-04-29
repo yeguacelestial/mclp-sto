@@ -1,25 +1,27 @@
-# *** INPUT:
-# * Instance >> coord
-# * Number of sites to select >> S
-# * Service radius of each site >> radius
-# * Desired population to cover >> M
-# *********************************************
-# *** Constructive Heuristic:
-#           * Create empty solution -> sites = [] 
-#           * Generate all candidate sites under specified radius
-#           * Evaluate objective function of these sites -> sites_OF = [of-1, of-2,...,of-n]
-#           * for site in range(sites):
-#               if M covered is greater than 0:
-#                   Pick the site with the MAX objective function, and add to solution -> sites.append(max_of(site))
-#               else:
-#                   end for loop
-#           * Return sites
-# *********************************************
-# *** OUTPUT:
-# * Objective function of Constructive Heuristic -> Total of the population covered
-# * Execution time of the Constructive Heuristic -> cpu_sec_ch
-# * Objective function of Local Search Heuristic -> Total of the population covered IMPROVED
-# * Execution time of the Local Search Heuristic -> cpu_sec_ls
+"""
+*** INPUT:
+* Instance >> coord
+* Number of sites to select >> S
+* Service radius of each site >> radius
+* Desired population to cover >> M
+*********************************************
+*** Constructive Heuristic:
+          * Create empty solution -> sites = [] 
+          * Generate all candidate sites under specified radius
+          * Evaluate objective function of these sites -> sites_OF = [of-1, of-2,...,of-n]
+          * for site in range(sites):
+              if M covered is greater than 0:
+                  Pick the site with the MAX objective function, and add to solution -> sites.append(max_of(site))
+              else:
+                  end for loop
+          * Return sites
+*********************************************
+*** OUTPUT:
+* Objective function of Constructive Heuristic -> Total of the population covered
+* Execution time of the Constructive Heuristic -> cpu_sec_ch
+* Objective function of Local Search Heuristic -> Total of the population covered IMPROVED
+* Execution time of the Local Search Heuristic -> cpu_sec_ls
+"""
 
 # TODO: Generate objective functions matrix
 
@@ -33,9 +35,6 @@ from openpyxl import load_workbook
 
 
 def main():
-    time_start = time.clock()
-    # START OF THE CODE
-
     # Get input
     get_input = getInput()
     options = get_input[0]
@@ -44,6 +43,7 @@ def main():
     # Instances directory
     try:
         instances_directory = options.directory
+        candidate_sites = int(options.candidate_sites)
         number_of_sites = int(options.sites)
         radius = float(options.radius)
 
@@ -59,13 +59,23 @@ def main():
 
     except NotADirectoryError as e:
         number_of_sites = int(options.sites)
+        candidate_sites = int(options.candidate_sites)
         radius = float(options.radius)
         instance = options.directory
 
         print(f"[*] Working with instance {instance}...")
         coordinates_list = read_data(instance)
-        generate_candidate_sites(coordinates_list, radius)
-    
+        
+        # Create a copy of coordinates without index
+        coordinates_xy = [] 
+        for coordinate in coordinates_list:
+            coordinates_xy.append(coordinate[1:])
+
+        coordinates_list = coordinates_xy[:]
+
+        # Solve MCLP
+        mclp(coordinates_list, number_of_sites, radius, candidate_sites)
+
     except FileNotFoundError:
         print("[-] Error: File not found.")
     
@@ -77,14 +87,12 @@ def main():
         #print("[-] Error: something went wrong.")
 
 
-    # END OF THE CODE
-    time_elapsed = time.clock() - time_start
-    print(f"[*] Elapsed time: {time_elapsed}s")
-
-
 def getInput():
     parser = OptionParser()
-    parser.add_option("-k", "--sites",
+    parser.add_option("-c", "--sites",
+                      dest="candidate_sites",
+                      help="INT value - Number of candidate sites to generate.")
+    parser.add_option("-s", "--select-sites",
                       dest="sites",
                       help="INT value - Number of sites to select.")
     parser.add_option("-r", "--radius",
@@ -116,24 +124,19 @@ def read_data(file):
 
     for row in sheet.iter_rows(min_row=sheet.min_row+1, max_row=sheet.max_row):
         coordinates_list.append((row[0].value,row[1].value,row[2].value))
-
+    
     return coordinates_list
 
 
 def generate_candidate_sites(coordinates, S):
-    # Generate candidate sites inside a convex hull of given coordinates
-    # INPUT:
-    #   coordinates => List of coordinates to work on
-    #   S => Number of sites to generate
-    # RETURN:
-    #   candidate_sites list
-
-    # Create a copy of coordinates without index
-    coordinates_xy = [] 
-    for coordinate in coordinates:
-        coordinates_xy.append(coordinate[1:])
-
-    coordinates = coordinates_xy[:]
+    """
+    Generate candidate sites inside a convex hull of given coordinates
+    INPUT:
+      coordinates => List of coordinates to work on
+      S => Number of sites to generate
+    RETURN:
+      candidate_sites list
+    """
 
     # From array to numpy array
     coordinates = np.array(coordinates)
@@ -163,15 +166,38 @@ def generate_candidate_sites(coordinates, S):
             sites.append(random_point)
 
     sites_coordinates = np.array([(site.x,site.y) for site in sites])
-    print(sites_coordinates)
+
     return sites_coordinates
 
-def mclp(coord, S, radius, M):
-    # coord => Coordinates
-    # S => Number of sites to select
-    # radius => Service radius of each site
-    # M => Desired population to cover
-    
+
+def mclp(coordinates, S, radius, M):
+    """
+    SOLVE MCLP
+    *Input:
+        coord => Coordinates
+        S => Number of sites to select
+        radius => Service radius of each site
+        M => Number of candidate sites (randomly generated inside the ConvexHull polygon)
+
+    *Return:
+        optimal_sites => Locations of K optimal sites, numpy array
+        f => Value of objective function
+    """
+    # Start timer
+    time_start = time.clock()
+
+    # START OF CONSTRUCTIVE HEURISTIC
+
+    # Generated candidate sites
+    sites = generate_candidate_sites(coordinates, M)
+    # Distance matrix
+    from scipy.spatial import distance_matrix
+    dist_matrix = distance_matrix(coordinates, sites)
+    # END OF CONSTRUCTIVE HEURISTIC
+
+    # End timer
+    time_elapsed = time.clock() - time_start
+    print(f"[*] Elapsed time: {time_elapsed}s")
     return
 
 
