@@ -69,6 +69,9 @@ def main():
     except FileNotFoundError:
         print("[-] Error: File not found.")
     
+    except TypeError:
+        print("[-] Error: input couldn't be read.")
+
     except Exception as e:
         raise
         #print("[-] Error: something went wrong.")
