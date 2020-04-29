@@ -65,7 +65,7 @@ def main():
 
         print(f"[*] Working with instance {instance}...")
         coordinates_list = read_data(instance)
-        
+
         # Create a copy of coordinates without index
         coordinates_xy = [] 
         for coordinate in coordinates_list:
@@ -190,11 +190,12 @@ def mclp(coordinates, S, radius, M):
 
     # Generated candidate sites
     sites = generate_candidate_sites(coordinates, M)
+
     # Distance matrix
     from scipy.spatial import distance_matrix
     dist_matrix = distance_matrix(coordinates, sites)
+    print(dist_matrix)
     # END OF CONSTRUCTIVE HEURISTIC
-
     # End timer
     time_elapsed = time.clock() - time_start
     print(f"[*] Elapsed time: {time_elapsed}s")
