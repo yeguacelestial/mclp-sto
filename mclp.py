@@ -157,7 +157,6 @@ def generate_candidate_sites(coordinates, S):
     from shapely.geometry import Point
     from numpy import random
 
-    # Constructive heuristic
     sites = []
     while len(sites) < S:
         random_point = Point([random.uniform(min_x, max_x),
@@ -190,11 +189,22 @@ def mclp(coordinates, S, radius, M):
 
     # Generated candidate sites
     sites = generate_candidate_sites(coordinates, M)
+    from numpy import array
+    coordinates = array(coordinates)
+    print(f"Dimension of coordinates: {coordinates.shape}")
+    print(f"Dimension of sites: {sites.shape}")
 
-    # Distance matrix
-    from scipy.spatial import distance_matrix
-    dist_matrix = distance_matrix(coordinates, sites)
-    print(dist_matrix)
+    # Create I and J sets
+    I_set = coordinates.shape[0]
+    J_set = sites.shape[0]
+
+    print(f'I set - Size of the instance: {I_set}')
+    print(f'J set - Number of sites to be selected: {J_set}')
+
+    # Create distance matrix
+    from scipy.spatial.distance import cdist
+    dist_matrix = cdist(coordinates, sites, 'euclidean')
+    
     # END OF CONSTRUCTIVE HEURISTIC
     # End timer
     time_elapsed = time.clock() - time_start
