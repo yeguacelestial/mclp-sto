@@ -1,7 +1,8 @@
 # INPUT:
-# * Number of sites to select >> K
+# * Instance >> coord
+# * Number of sites to select >> S
 # * Service radius of each site >> radius
-# * Candidate site size (Desired population to cover) >> M
+# * Desired population to cover >> M
 #
 # OUTPUT:
 # * Objective function of Constructive Heuristic -> Total of the population covered
@@ -9,7 +10,17 @@
 # * Objective function of Local Search Heuristic -> Total of the population covered IMPROVED
 # * Execution time of the Local Search Heuristic -> cpu_sec_ls
 
-# TODO: Process each instance generated
+# TODO: Generate objective functions matrix
+# TODO: Constructive Heuristic:
+#           * Create empty solution -> sites = [] 
+#           * Generate all candidate sites under specified radius
+#           * Evaluate objective function of these sites -> sites_OF = [of-1, of-2,...,of-n]
+#           * for site in range(sites):
+#               if M covered is greater than 0:
+#                   Pick the site with the MAX objective function, and add to solution -> sites.append(max_of(site))
+#               else:
+#                   end for loop
+#           * Return sites
 
 import os
 from os import listdir
@@ -29,18 +40,30 @@ def main():
     arguments = get_input[1]
 
     # Instances directory
-    instances_directory = options.directory
-    instances_directory_list = sorted_ls(instances_directory)
+    try:
+        instances_directory = options.directory
+        instances_directory_list = sorted_ls(instances_directory)
+
+        # Read each instance file
+        for instance in instances_directory_list:
+            print(f"[*] Working with instance {instance}...")
+            file = f'{instances_directory}/{instance}'
+            coordinates_list = read_data(file)
+            print(coordinates_list)
+
+    except NotADirectoryError as e:
+        instance = options.directory
+        print(f"[*] Working with instance {instance}...")
+        coordinates_list = read_data(instance)
+        print(coordinates_list)
     
-    # Read each instance file
-    for instance in instances_directory_list:
-        file = f'{instances_directory}/{instance}'
-        read_data(file)
+    except FileNotFoundError:
+        print("[-] Error: File not found.")
 
 
     # END OF THE CODE
     time_elapsed = time.clock() - time_start
-    print(f"Elapsed time: {time_elapsed}s")
+    print(f"[*] Elapsed time: {time_elapsed}s")
 
 
 def getInput():
@@ -53,7 +76,7 @@ def getInput():
                       help="FLOAT value - Service radius of each size")
     parser.add_option("-d", "--directory",
                       dest="directory",
-                      help="STRING value - directory of the instances to compute")
+                      help="STRING value - Folder or file name of the instances to compute")
     (options, args) = parser.parse_args()
 
     return options, args
@@ -75,11 +98,26 @@ def read_data(file):
     # Get i, x and y from each row
     coordinates_list = []
 
-    for row in sheet.iter_rows(min_row=sheet.min_row+1, max_row=sheet.max_row+1):
+    for row in sheet.iter_rows(min_row=sheet.min_row+1, max_row=sheet.max_row):
         coordinates_list.append((row[0].value,row[1].value,row[2].value))
 
     print(coordinates_list)
 
+    return coordinates_list
+
+
+def generate_sites(coordinates, S):
+    # coordinates => List of coordinates to work on
+    # S => Number of sites to generate
+
+    return
+
+def mclp(coord, S, radius, M):
+    # coord => Coordinates
+    # S => Number of sites to select
+    # radius => Service radius of each site
+    # M => Desired population to cover
+    
     return
 
 
