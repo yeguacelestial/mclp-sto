@@ -204,7 +204,12 @@ def mclp(coordinates, S, radius, M):
     # Create distance matrix
     from scipy.spatial.distance import cdist
     dist_matrix = cdist(coordinates, sites, 'euclidean')
-    
+
+    # Generate boolean matrix for each candidate under radius
+    mask1 = dist_matrix <= radius
+    dist_matrix[mask1] = 1
+    dist_matrix[~mask1] = 0
+
     # END OF CONSTRUCTIVE HEURISTIC
     # End timer
     time_elapsed = time.clock() - time_start
