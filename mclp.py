@@ -179,8 +179,8 @@ def mclp(coordinates, S, radius, M):
         M => Number of candidate sites (randomly generated inside the ConvexHull polygon)
 
     *Return:
-        optimal_sites => Locations of K optimal sites, numpy array
-        f => Value of objective function
+        opt_sites => Locations of K optimal sites, numpy array
+        objective => Value of objective function
     """
     # Start timer
     time_start = time.clock()
@@ -241,31 +241,30 @@ def mclp(coordinates, S, radius, M):
 
     m.setParam('OutputFlag', 0)
     m.optimize()
-    objective = m.objVal
     # END OF COMPUTATION OF CONSTRUCTIVE HEURISTIC
+    
+    try:
+        objective = m.objVal
+        # End timer
+        time_elapsed = time.clock() - time_start
 
-    # End timer
-    time_elapsed = time.clock() - time_start
+        # OUTPUT
+        print(f"[+] Execution time: {time_elapsed}s")
+        print(f"[+] Population covered: {objective}")
 
-    # OUTPUT
-    print(f"[+] Execution time: {time_elapsed}s")
-    print(f"[+] Population covered: {objective}")
+        # Get solution data
+        solution = []
+        if m.status == GRB.Status.OPTIMAL:
+            for v in m.getVars():
+                if v.x==1 and v.varName[0]=="x":
+                    solution.append(int(v.varName[1:]))
+        opt_sites = sites[solution]
 
-    # Get solution data
-    solution = []
-    if m.status == GRB.Status.OPTIMAL:
-        for v in m.getVars():
-            if v.x==1 and v.varName[0]=="x":
-                solution.append(int(v.varName[1:]))
-    opt_sites = sites[solution]
+        return opt_sites, objective
 
-    count = 0
-    for site in opt_sites[:-1]:
-        site_index = np.where(site)[:][0][count]
-        print(f"[+] Coordinates for optimal site {site_index+1} => {site}")
-        count += 1
+    except:
+        print("[-] Error: this problem is infeasible.")
 
-    return opt_sites, objective
 
 def delete_last_line():
     import sys
