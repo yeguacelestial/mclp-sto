@@ -52,11 +52,21 @@ def main():
 
         # Read each instance file
         for instance in instances_directory_list:
-            print(f"[*] Working with instance {instance}...")
+            print(f"\n[*] Working with instance {instance}...")
             file = f'{instances_directory}/{instance}'
             coordinates_list = read_data(file)
-            print(coordinates_list)
+            
+            # Create a copy of coordinates without index
+            coordinates_xy = [] 
+            for coordinate in coordinates_list:
+                coordinates_xy.append(coordinate[1:])
 
+            coordinates_list = coordinates_xy[:]
+
+            # Solve MCLP
+            mclp(coordinates_list, number_of_sites, radius, candidate_sites)
+            
+    # If user specifies single file
     except NotADirectoryError as e:
         number_of_sites = int(options.sites)
         candidate_sites = int(options.candidate_sites)
@@ -89,7 +99,7 @@ def main():
 
 def getInput():
     parser = OptionParser()
-    parser.add_option("-c", "--sites",
+    parser.add_option("-c", "--candidate-sites",
                       dest="candidate_sites",
                       help="INT value - Number of candidate sites to generate.")
     parser.add_option("-s", "--select-sites",
@@ -242,7 +252,7 @@ def mclp(coordinates, S, radius, M):
     m.setParam('OutputFlag', 0)
     m.optimize()
     # END OF COMPUTATION OF CONSTRUCTIVE HEURISTIC
-    
+
     try:
         objective = m.objVal
         # End timer
