@@ -235,10 +235,17 @@ def mclp(coordinates, S, radius, M):
     # Set objective function on the model
     m.setObjective(quicksum(y[i] for i in range(I_set)), GRB.MAXIMIZE)
 
-    # END OF CONSTRUCTIVE HEURISTIC
+    m.setParam('OutputFlag', 0)
+    m.optimize()
+    objective_function = m.objVal
+    # END OF COMPUTATION OF CONSTRUCTIVE HEURISTIC
+
     # End timer
     time_elapsed = time.clock() - time_start
-    print(f"[*] Elapsed time: {time_elapsed}s")
+
+    # OUTPUT
+    print(f"[+] Execution time: {time_elapsed}s")
+    print(f"[+] Optimal coverage points: {objective_function}")
     return
 
 
