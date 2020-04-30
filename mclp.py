@@ -217,8 +217,8 @@ def mclp(coordinates, S, radius, M):
 
     # Generate boolean matrix for each candidate under radius
     mask1 = dist_matrix <= radius
-    dist_matrix[mask1] = 1
-    dist_matrix[~mask1] = 0
+    dist_matrix[mask1] = 1  # Stores '1' if dist_matrix value is less than radius
+    dist_matrix[~mask1] = 0 # Stores '0' if dist_matrix value is greater than radius
 
     # Build Model
     m = Model()
