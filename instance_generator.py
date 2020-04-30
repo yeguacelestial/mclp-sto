@@ -26,7 +26,7 @@ def main():
 
         print(f"[*] Specified size: {size}")
         print(f"[*] Number of instances to generate: {instances}")
-        print(f"[*] Filenames: {filenames}[size]_[instance].xlsx")
+        print(f"[*] Format of the filenames: {filenames}[size]_[instance].xlsx")
 
         print("\n[+] Generating instances...")
         generate(size, instances, filenames)
