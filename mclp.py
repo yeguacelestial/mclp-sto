@@ -229,6 +229,12 @@ def mclp(coordinates, S, radius, M):
     # Add constraints to the model
     m.addConstr(quicksum(x[j] for j in range(J_set)) == S)
 
+    for i in range(I_set):
+        m.addConstr(quicksum(x[j] for j in np.where(dist_matrix[i]==1)[0]) >= y[i])
+    
+    # Set objective function on the model
+    m.setObjective(quicksum(y[i] for i in range(I_set)), GRB.MAXIMIZE)
+
     # END OF CONSTRUCTIVE HEURISTIC
     # End timer
     time_elapsed = time.clock() - time_start
