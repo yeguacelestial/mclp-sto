@@ -32,7 +32,7 @@ from optparse import OptionParser
 import time
 import openpyxl
 from openpyxl import load_workbook
-
+from gurobipy import *
 
 def main():
     # Get input
@@ -209,6 +209,25 @@ def mclp(coordinates, S, radius, M):
     mask1 = dist_matrix <= radius
     dist_matrix[mask1] = 1
     dist_matrix[~mask1] = 0
+
+    # Build Model
+    m = Model()
+
+    # Add variables
+    x = {}
+    y = {}
+
+    for i in range(I_set):
+        y[i] = m.addVar(vtype=GRB.BINARY, name="y%d" % i)
+    
+    for j in range(J_set):
+        x[j] = m.addVar(vtype=GRB.BINARY, name="x%d" % j)
+    
+    # Update model
+    m.update()
+
+    # Add constraints to the model
+    m.addConstr(quicksum(x[j] for j in range(J_set)) == S)
 
     # END OF CONSTRUCTIVE HEURISTIC
     # End timer
