@@ -25,6 +25,8 @@
 
 # TODO: Generate objective functions matrix
 
+import colorama
+from colorama import Fore, Back, Style
 import numpy as np
 import os
 from os import listdir
@@ -35,6 +37,8 @@ from openpyxl import load_workbook
 from gurobipy import *
 
 def main():
+    colorama.init()
+
     # Get input
     get_input = getInput()
     options = get_input[0]
@@ -90,7 +94,8 @@ def main():
         print("[-] Error: File not found.")
     
     except TypeError:
-        print("[-] Error: input couldn't be read.")
+        print(Fore.RED + "[-] Error: input couldn't be read." + Style.RESET_ALL)
+        print(Fore.YELLOW + "[*] Use 'mclp.py -h' for usage info." + Style.RESET_ALL)
 
     except Exception as e:
         raise
