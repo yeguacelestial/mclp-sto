@@ -23,7 +23,7 @@
 * Execution time of the Local Search Heuristic -> cpu_sec_ls
 """
 
-# TODO: Generate objective functions matrix
+# TODO: Code Local Search Heuristic
 
 import colorama
 from colorama import Fore, Back, Style
@@ -71,7 +71,7 @@ def main():
             # Solve MCLP
             mclp(coordinates_list, number_of_sites, radius, candidate_sites)
             
-    # If user specifies single file
+    # Single file
     except NotADirectoryError as e:
         number_of_sites = int(options.sites)
         candidate_sites = int(options.candidate_sites)
