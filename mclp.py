@@ -78,7 +78,7 @@ def main():
         radius = float(options.radius)
         instance = options.directory
 
-        print(f"[*] Working with instance {instance}...")
+        print(f"[*] Computing instance {instance}...")
         coordinates_list = read_data(instance)
 
         # Create a copy of coordinates without index

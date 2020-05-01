@@ -54,7 +54,8 @@ def getInput():
 
 def generate(size, instances, filenames):
     try:
-        os.mkdir('instances')
+        folder = f'{filenames}_instances'
+        os.mkdir(folder)
 
     except FileExistsError as e:
         pass
@@ -67,23 +68,23 @@ def generate(size, instances, filenames):
             # Create excel file 
             filename = f'{filenames}{size}_{i}.xlsx'
             print(f"[+] Creating {filename}...")
-            create_excel(filename)
+            create_excel(folder, filename)
             
             # Write data on excel file
             print(f"[+] Writing data on {filename}...")
-            write_excel(filename, data)
+            write_excel(folder, filename, data)
 
 
-def create_excel(filename):
+def create_excel(folder, filename):
     wb = Workbook()
     ws = wb.active
     ws.title = f"MCLP Instance data"
-    wb.save(filename=f'instances/{filename}')
+    wb.save(filename=f'{folder}/{filename}')
 
 
-def write_excel(filename, data):
+def write_excel(folder, filename, data):
     # Load excel file
-    workbook = load_workbook(f'instances/{filename}')
+    workbook = load_workbook(f'{folder}/{filename}')
     sheet = workbook.get_sheet_by_name("MCLP Instance data")
     sheet['A1'] = 'i'
     sheet['B1'] = 'x'
@@ -104,7 +105,7 @@ def write_excel(filename, data):
             # y:
             sheet.cell(row=row+2, column=3).value = data[row][1]
 
-    workbook.save(f'instances/{filename}')
+    workbook.save(f'{folder}/{filename}')
 
 
 if __name__ == '__main__':
