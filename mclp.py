@@ -56,8 +56,8 @@ def main():
 
         # Read each instance file
         for instance in instances_directory_list:
-            print(f"\n[*] Computing instance {instance}...\n")
-            print("")
+            # print(f"\n[*] Computing instance {instance}...\n")
+            # print("")
             file = f'{instances_directory}/{instance}'
             coordinates_list = read_data(file)
             
@@ -69,7 +69,7 @@ def main():
             coordinates_list = coordinates_xy[:]
 
             # Solve MCLP
-            mclp(coordinates_list, number_of_sites, radius, candidate_sites)
+            mclp(coordinates_list, number_of_sites, radius, candidate_sites, instance)
             
     # Single file
     except NotADirectoryError as e:
@@ -185,7 +185,7 @@ def generate_candidate_sites(coordinates, S):
     return sites_coordinates
 
 
-def mclp(coordinates, S, radius, M):
+def mclp(coordinates, S, radius, M, instance_name):
     """
     SOLVE MCLP
     *Input:
@@ -218,6 +218,7 @@ def mclp(coordinates, S, radius, M):
     I_set = coordinates.shape[0]
     J_set = sites.shape[0]
 
+    print(f"\n[*] Computing instance {instance_name}...")
     print(f'I set - Size of the instance: {I_set}')
     print(f'J set - Number of sites to be selected: {J_set}')
 
@@ -257,9 +258,15 @@ def mclp(coordinates, S, radius, M):
     # END OF COMPUTATION OF CONSTRUCTIVE HEURISTIC
 
     try:
-        objective = m.objVal
         # End timer
         time_elapsed = time.clock() - time_start
+
+        objective = m.objVal
+
+        # If objective function is less or equal than 0:
+        if objective <= 0: 
+            objective = 0
+            print("[-] Couldn't maximize this instance.")
 
         # OUTPUT
         print(f"[+] Objective Function - Population covered: {objective}")
