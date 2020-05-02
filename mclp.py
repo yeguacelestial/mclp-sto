@@ -78,7 +78,6 @@ def main():
         radius = float(options.radius)
         instance = options.directory
 
-        print(f"[*] Computing instance {instance}...")
         coordinates_list = read_data(instance)
 
         # Create a copy of coordinates without index
@@ -89,7 +88,7 @@ def main():
         coordinates_list = coordinates_xy[:]
 
         # Solve MCLP
-        mclp(coordinates_list, number_of_sites, radius, candidate_sites)
+        mclp(coordinates_list, number_of_sites, radius, candidate_sites, instance)
 
     except FileNotFoundError:
         print("[-] Error: File not found.")
@@ -236,10 +235,10 @@ def mclp(coordinates, S, radius, M, instance_name):
     y = {}
 
     for i in range(I_set):
-        y[i] = m.addVar(vtype=GRB.BINARY, name="y%d" % i)
+        y[i] = m.addVar(vtype=GRB.BINARY, name=f"y{i}")
     
     for j in range(J_set):
-        x[j] = m.addVar(vtype=GRB.BINARY, name="x%d" % j)
+        x[j] = m.addVar(vtype=GRB.BINARY, name=f"x{j}")
     
     # Update model
     m.update()
@@ -260,7 +259,6 @@ def mclp(coordinates, S, radius, M, instance_name):
     try:
         # End timer
         time_elapsed = time.clock() - time_start
-
         objective = m.objVal
 
         # If objective function is less or equal than 0:

@@ -13,6 +13,8 @@ import numpy as np
 from optparse import OptionParser
 from sklearn.datasets import make_moons
 
+# TODO: Change data type of input generated to int
+
 def main():
     get_input = getInput()
 
