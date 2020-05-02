@@ -56,8 +56,6 @@ def main():
 
         # Read each instance file
         for instance in instances_directory_list:
-            # print(f"\n[*] Computing instance {instance}...\n")
-            # print("")
             file = f'{instances_directory}/{instance}'
             coordinates_list = read_data(file)
             
@@ -202,6 +200,8 @@ def mclp(coordinates, S, radius, M, instance_name):
     time_start = time.clock()
 
     # START OF CONSTRUCTIVE HEURISTIC
+    print(f"\n[+] Computing instance {instance_name}...")
+
     # Build Model
     m = Model()
 
@@ -218,9 +218,9 @@ def mclp(coordinates, S, radius, M, instance_name):
     I_set = coordinates.shape[0]
     J_set = sites.shape[0]
 
-    print(f"\n[*] Computing instance {instance_name}...")
-    print(f'I set - Size of the instance: {I_set}')
-    print(f'J set - Number of sites to be selected: {J_set}')
+    print(f'[*] Size of the instance: {I_set}')
+    print(f'[*] Number of sites to generate: {J_set}')
+    print(f'[*] Number of sites to be selected: {S}')
 
     # Create distance matrix
     from scipy.spatial.distance import cdist
