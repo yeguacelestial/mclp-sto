@@ -180,6 +180,7 @@ def generate_candidate_sites(coordinates, S):
             sites.append(random_point)
 
     sites_coordinates = np.array([(site.x,site.y) for site in sites])
+    sites_coordinates = sites_coordinates.astype(int)
 
     return sites_coordinates
 
@@ -223,7 +224,8 @@ def mclp(coordinates, S, radius, M, instance_name):
 
     # Create distance matrix
     from scipy.spatial.distance import cdist
-    dist_matrix = cdist(coordinates, sites, 'euclidean')
+    dist_matrix = cdist(coordinates, sites, 'euclidean').astype(int)
+    print(dist_matrix)
 
     # Generate boolean matrix for each candidate under radius
     mask1 = dist_matrix <= radius
