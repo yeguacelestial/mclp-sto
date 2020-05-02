@@ -25,14 +25,20 @@ def main():
         size = int(options.size)
         instances = int(options.instances)
         filenames = options.filenames
+        min_value = int(options.min_value)
+        max_value = int(options.max_value)
 
         print(f"[*] Specified size: {size}")
         print(f"[*] Number of instances to generate: {instances}")
         print(f"[*] Format of the filenames: {filenames}[size]_[instance].xlsx")
 
         print("\n[+] Generating instances...")
-        generate(size, instances, filenames)
+        generate(size, instances, filenames, min_value, max_value)
         print("\n[+] Done.")
+
+    except ValueError:
+        print ("[-] Error: something is wrong with the range. Perhaps low>=high ?")
+        print("[*] REMINDER: '-m' stands for minimum value and '-M' stands for maximum value.")
 
     except:
         print("[*] Use 'instance_generator -h' to get information of use.")
@@ -44,12 +50,12 @@ def getInput():
                       dest="size",
                       help="INT value - Size of population to generate on instance/instances.",
                       type=int)
-    parser.add_option("-m", "--min-range",
-                      dest="min_range",
+    parser.add_option("-m", "--min-value",
+                      dest="min_value",
                       help="INT value - Minimum value to be generated on instance/instances.",
                       type=int)
-    parser.add_option("-M", "--max-range",
-                      dest="max_range",
+    parser.add_option("-M", "--max-value",
+                      dest="max_value",
                       help="INT value - Maximum value to be generated on instance/instances.",
                       type=int)
     parser.add_option("-i", "--instances",
@@ -65,7 +71,7 @@ def getInput():
     return options, args
 
 
-def generate(size, instances, filenames):
+def generate(size, instances, filenames, min_value, max_value):
     try:
         folder = f'{filenames}_instances'
         os.mkdir(folder)
@@ -79,7 +85,7 @@ def generate(size, instances, filenames):
             # data = np.random.rand(size,2)
 
             # Generate int data
-            data = np.random.randint(10, size=(size, 2))
+            data = np.random.randint(low=min_value, high=max_value, size=(size, 2))
 
             # Create excel file 
             filename = f'{filenames}{size}_{i}.xlsx'
