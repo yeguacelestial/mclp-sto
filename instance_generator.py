@@ -42,13 +42,24 @@ def getInput():
     parser = OptionParser()
     parser.add_option("-s", "--size",
                       dest="size",
-                      help="INT value - Size of population to generate on each instance.")
+                      help="INT value - Size of population to generate on instance/instances.",
+                      type=int)
+    parser.add_option("-m", "--min-range",
+                      dest="min_range",
+                      help="INT value - Minimum value to be generated on instance/instances.",
+                      type=int)
+    parser.add_option("-M", "--max-range",
+                      dest="max_range",
+                      help="INT value - Maximum value to be generated on instance/instances.",
+                      type=int)
     parser.add_option("-i", "--instances",
                       dest="instances",
-                      help="INT value - Number of instances to generate.")
+                      help="INT value - Number of instances to generate.",
+                      type=int)
     parser.add_option("-f", "--filenames",
                       dest="filenames",
-                      help="String value - Name of the instances")
+                      help="String value - Name of the instances",
+                      type=str)
     (options, args) = parser.parse_args()
 
     return options, args
