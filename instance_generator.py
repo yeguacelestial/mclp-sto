@@ -11,7 +11,7 @@ from openpyxl import Workbook
 from openpyxl import load_workbook
 import numpy as np
 from optparse import OptionParser
-from sklearn.datasets import make_moons
+#from sklearn.datasets import make_moons
 
 # TODO: Change data type of input generated to int
 
@@ -64,8 +64,11 @@ def generate(size, instances, filenames):
 
     finally:
         for i in range(1, instances+1):
-            # Generate data
-            data = np.random.rand(size,2)
+            # Generate float64 data
+            # data = np.random.rand(size,2)
+
+            # Generate int data
+            data = np.random.randint(10, size=(size, 2))
 
             # Create excel file 
             filename = f'{filenames}{size}_{i}.xlsx'
