@@ -1,4 +1,5 @@
 """
+MAXIMUM COVERING LOCATION PROBLEM - Constructive Heuristic and Local Search Heuristic
 *** INPUT:
 * Instance >> coord
 * Number of sites to select >> S
@@ -21,6 +22,10 @@
 * Execution time of the Constructive Heuristic -> cpu_sec_ch
 * Objective function of Local Search Heuristic -> Total of the population covered IMPROVED
 * Execution time of the Local Search Heuristic -> cpu_sec_ls
+*********************************************
+NOTE: Euclidean distance => AC = sqrt(AB² + BC²) = sqrt( (x2 - x1)² + (y2 - y1)² )
+*********************************************
+NOTE - About Local Search approach: Okay. You already have the candidate sites of an specific instance. The Greddy Adding with Substitution Algorithm iterate each "free" site and compares the objective function (population covered by that site) it to a site inside the given solution. That could work. Remember. Local Search seeks to improve a given solution by making small movements on it.  
 """
 
 # TODO: Code Local Search Heuristic
@@ -222,9 +227,13 @@ def mclp(coordinates, S, radius, M, instance_name):
     print(f'[*] Number of sites to generate: {J_set}')
     print(f'[*] Number of sites to be selected: {S}')
 
+    print(f"[*] Coordinates: \n{coordinates}")
+    print(f"[*] Candidate sites:\n {sites}")
+
     # Create distance matrix
     from scipy.spatial.distance import cdist
     dist_matrix = cdist(coordinates, sites, 'euclidean').astype(int)
+    print("[*] Distance matrix: ")
     print(dist_matrix)
 
     # Generate boolean matrix for each candidate under radius
@@ -279,6 +288,9 @@ def mclp(coordinates, S, radius, M, instance_name):
                 if v.x==1 and v.varName[0]=="x":
                     solution.append(int(v.varName[1:]))
         opt_sites = sites[solution]
+
+        print(f"[*] Chosen sites:\n {opt_sites}")
+        print(f"[*] Solution set: {solution}")
 
         return opt_sites, objective
 
