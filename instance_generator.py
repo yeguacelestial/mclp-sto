@@ -101,15 +101,24 @@ def generate(size, instances, filenames, min_value, max_value, number_candidate_
             data_population_y = [coord[1] for coord in data_population]
 
             df = pd.DataFrame({'x': data_population_x, 'y': data_population_y})
+            df.index.name = 'i'
             df.index += 1
-            df.to_excel(writer, sheet_name='Population nodes')
-            writer.save()
+            df.to_excel(writer, sheet_name='Population')
 
             # Generate and write candidate sites data on excel file
             print(f"[+] Writing candidate sites data on {filename}...")
             data_candidate_sites = generate_candidate_sites(data_population, number_candidate_sites)
-            #write_excel(folder, filename, data_candidate_sites, col1, col2, col3, col1_name, col2_name, col3_name)
+            data_candidate_sites_x = [coord[0] for coord in data_candidate_sites]
+            data_candidate_sites_y = [coord[1] for coord in data_candidate_sites]
 
+            df = pd.DataFrame({'x': data_candidate_sites_x, 'y': data_candidate_sites_y})
+            df.index.name = 'j'
+            df.index += 1
+            df.to_excel(writer, sheet_name='Candidate sites')
+
+            # Save Excel file and close it
+            writer.save()
+            
 
 def generate_candidate_sites(coordinates, S):
     """
