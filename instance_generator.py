@@ -11,11 +11,8 @@ from openpyxl import Workbook
 from openpyxl import load_workbook
 import numpy as np
 from optparse import OptionParser
-
 import pandas as pd
-
-# TODO: Migrate from openpyxl to Pandas
-# TODO: New input - Set of candidate sites
+import sys
 
 def main():
     get_input = getInput()
@@ -85,40 +82,43 @@ def generate(size, instances, filenames, min_value, max_value, number_candidate_
         os.mkdir(folder)
 
     except FileExistsError as e:
-        pass
+        response = input(f"[*] Directory or file '{filenames}_instances' already exists. Continue anyway? [Y]/n => ")
+        if response == 'n' or response == 'N':
+            return
+        else:
+            pass
 
-    finally:
-        for i in range(1, instances+1):
-            # Create excel file 
-            filename = f'{filenames}{size}_{i}.xlsx'
-            print(f"[+] Creating {filename}...")
-            writer = pd.ExcelWriter(f'{folder}/{filename}', engine='xlsxwriter')
-            
-            # Generate and write population data on excel file
-            print(f"[+] Generating and writing population data on {filename}...")
-            data_population = np.random.randint(low=min_value, high=max_value, size=(size, 2))
-            data_population_x = [coord[0] for coord in data_population]
-            data_population_y = [coord[1] for coord in data_population]
+    for i in range(1, instances+1):
+        # Create excel file 
+        filename = f'{filenames}{size}_{i}.xlsx'
+        print(f"[+] Creating {filename}...")
+        writer = pd.ExcelWriter(f'{folder}/{filename}', engine='xlsxwriter')
+        
+        # Generate and write population data on excel file
+        print(f"[+] Generating and writing population data on {filename}...")
+        data_population = np.random.randint(low=min_value, high=max_value, size=(size, 2))
+        data_population_x = [coord[0] for coord in data_population]
+        data_population_y = [coord[1] for coord in data_population]
 
-            df = pd.DataFrame({'x': data_population_x, 'y': data_population_y})
-            df.index.name = 'i'
-            df.index += 1
-            df.to_excel(writer, sheet_name='Population')
+        df = pd.DataFrame({'x': data_population_x, 'y': data_population_y})
+        df.index.name = 'i'
+        df.index += 1
+        df.to_excel(writer, sheet_name='Population')
 
-            # Generate and write candidate sites data on excel file
-            print(f"[+] Writing candidate sites data on {filename}...")
-            data_candidate_sites = generate_candidate_sites(data_population, number_candidate_sites)
-            data_candidate_sites_x = [coord[0] for coord in data_candidate_sites]
-            data_candidate_sites_y = [coord[1] for coord in data_candidate_sites]
+        # Generate and write candidate sites data on excel file
+        print(f"[+] Writing candidate sites data on {filename}...")
+        data_candidate_sites = generate_candidate_sites(data_population, number_candidate_sites)
+        data_candidate_sites_x = [coord[0] for coord in data_candidate_sites]
+        data_candidate_sites_y = [coord[1] for coord in data_candidate_sites]
 
-            df = pd.DataFrame({'x': data_candidate_sites_x, 'y': data_candidate_sites_y})
-            df.index.name = 'j'
-            df.index += 1
-            df.to_excel(writer, sheet_name='Candidate sites')
+        df = pd.DataFrame({'x': data_candidate_sites_x, 'y': data_candidate_sites_y})
+        df.index.name = 'j'
+        df.index += 1
+        df.to_excel(writer, sheet_name='Candidate sites')
 
-            # Save Excel file and close it
-            writer.save()
-            
+        # Save Excel file and close it
+        writer.save()
+
 
 def generate_candidate_sites(coordinates, S):
     """
@@ -160,7 +160,6 @@ def generate_candidate_sites(coordinates, S):
     sites_coordinates = sites_coordinates.astype(int)
 
     return sites_coordinates
-
 
 
 if __name__ == '__main__':
