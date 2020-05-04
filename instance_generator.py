@@ -24,11 +24,11 @@ def main():
     arguments = get_input[1]
     
     try:
-        size = int(options.size)
-        instances = int(options.instances)
+        size = options.size
+        instances = options.instances
         filenames = options.filenames
-        min_value = int(options.min_value)
-        max_value = int(options.max_value)
+        min_value = options.min_value
+        max_value = options.max_value
         number_candidate_sites = options.candidate_sites
 
         print(f"[*] Specified size: {size}")
@@ -161,31 +161,6 @@ def generate_candidate_sites(coordinates, S):
 
     return sites_coordinates
 
-
-def write_excel(folder, filename, data, col1, col2, col3, col1_name, col2_name, col3_name):
-    # Load excel file
-    workbook = load_workbook(f'{folder}/{filename}')
-    sheet = workbook.get_sheet_by_name("MCLP Instance data")
-    sheet[f'{col1}1'] = col1_name
-    sheet[f'{col2}1'] = col2_name
-    sheet[f'{col3}1'] = col3_name
-
-    # Cast ndarray to list
-    data = list(data)
-
-    # Write data
-    for row in range(sheet.max_row-1, len(data)):
-        for column in range(4):
-            # First column enumerate:
-            sheet.cell(row=row+2, column=1).value = row+1
-
-            # x:
-            sheet.cell(row=row+2, column=2).value = data[row][0]
-
-            # y:
-            sheet.cell(row=row+2, column=3).value = data[row][1]
-
-    workbook.save(f'{folder}/{filename}')
 
 
 if __name__ == '__main__':
