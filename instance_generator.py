@@ -12,7 +12,7 @@ from openpyxl import load_workbook
 import numpy as np
 from optparse import OptionParser
 import pandas as pd
-import sys
+
 
 def main():
     get_input = getInput()
