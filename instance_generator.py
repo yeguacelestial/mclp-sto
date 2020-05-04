@@ -1,10 +1,18 @@
-# INPUT:
-# * Size of each instance -> size
-# * Number of instances to generate -> instances
-# OUTPUT:
-# * Fixed sets generated in an Excel file
+"""
+MCLP INSTANCE GENERATOR
+*INPUT:
+    * Size of population to generate on instance/instances -> -s, --size
+    * Minimum value to be generated on instance/instances -> -m, --min-value
+    * Maximum value to be generated on instance/instances -> -M, --max-value
+    * Number of candidate sites to generate -> -c, --candidate-sites
+    * Number of instances to generate -> -i, --instances
+    * Name of the instances -> -f, --filenames
 
-# points -> ([x1,y1], [x2,y2], [x3,y3]...[xn,yn])
+*OUTPUT:
+    * EXCEL FILES:
+        * Sheet 1 -> 'Population' nodes, set i
+        * Sheet 2 -> 'Candidate sites' nodes, set j
+"""
 
 import os
 from openpyxl import Workbook
@@ -41,8 +49,7 @@ def main():
         print("[*] REMINDER: '-m' stands for minimum value and '-M' stands for maximum value.")
 
     except:
-        raise
-        #print("[*] Use 'instance_generator -h' to get information of use.")
+        print("[*] Use 'instance_generator -h' to get information of use.")
 
 
 def getInput():
