@@ -92,26 +92,22 @@ def generate(size, instances, filenames, min_value, max_value, number_candidate_
             # Create excel file 
             filename = f'{filenames}{size}_{i}.xlsx'
             print(f"[+] Creating {filename}...")
-            create_excel(folder, filename)
+            writer = pd.ExcelWriter(f'{folder}/{filename}', engine='xlsxwriter')
             
             # Generate and write population data on excel file
-            print(f"[+] Writing population data on {filename}...")
+            print(f"[+] Generating and writing population data on {filename}...")
             data_population = np.random.randint(low=min_value, high=max_value, size=(size, 2))
-            col1 = 'A'
-            col2 = 'B'
-            col3 = 'C'
-            col1_name = 'i'
-            col2_name = 'x'
-            col3_name = 'y'
-            #write_excel(folder, filename, data_population, col1, col2, col3, col1_name, col2_name, col3_name)
+            data_population_x = [coord[0] for coord in data_population]
+            data_population_y = [coord[1] for coord in data_population]
+
+            df = pd.DataFrame({'x': data_population_x, 'y': data_population_y})
+            df.index += 1
+            df.to_excel(writer, sheet_name='Population nodes')
+            writer.save()
 
             # Generate and write candidate sites data on excel file
             print(f"[+] Writing candidate sites data on {filename}...")
             data_candidate_sites = generate_candidate_sites(data_population, number_candidate_sites)
-            col1 = 'E'
-            col2 = 'F'
-            col3 = 'G'
-            col1_name = 'j'
             #write_excel(folder, filename, data_candidate_sites, col1, col2, col3, col1_name, col2_name, col3_name)
 
 
@@ -155,11 +151,6 @@ def generate_candidate_sites(coordinates, S):
     sites_coordinates = sites_coordinates.astype(int)
 
     return sites_coordinates
-
-
-def create_excel(folder, filename):
-    writer = pd.ExcelWriter(f'{folder}/{filename}', engine='xlsxwriter')
-    writer.save()
 
 
 def write_excel(folder, filename, data, col1, col2, col3, col1_name, col2_name, col3_name):
