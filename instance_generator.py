@@ -28,11 +28,11 @@ def main():
         max_value = options.max_value
         number_candidate_sites = options.candidate_sites
 
-        print(f"[*] Specified size: {size}")
-        print(f"[*] Number of instances to generate: {instances}")
-        print(f"[*] Format of the filenames: {filenames}[size]_[instance].xlsx")
+        print(f"[*] Population/nodes to generate: {size}")
+        print(f"[*] Instances to generate: {instances}")
+        print(f"[*] Format of the filenames: {filenames}<size>_<instance>.xlsx")
 
-        print("\n[+] Generating instances...")
+        print("\n[*] Generating instances...")
         generate(size, instances, filenames, min_value, max_value, number_candidate_sites)
         print("\n[+] Done.")
 
@@ -91,11 +91,11 @@ def generate(size, instances, filenames, min_value, max_value, number_candidate_
     for i in range(1, instances+1):
         # Create excel file 
         filename = f'{filenames}{size}_{i}.xlsx'
-        print(f"[+] Creating {filename}...")
+        print(f"\n[*] Creating {filename}...")
         writer = pd.ExcelWriter(f'{folder}/{filename}', engine='xlsxwriter')
         
         # Generate and write population data on excel file
-        print(f"[+] Generating and writing population data on {filename}...")
+        print(f"[*] Generating and writing population data on {filename}...")
         data_population = np.random.randint(low=min_value, high=max_value, size=(size, 2))
         data_population_x = [coord[0] for coord in data_population]
         data_population_y = [coord[1] for coord in data_population]
@@ -106,7 +106,7 @@ def generate(size, instances, filenames, min_value, max_value, number_candidate_
         df.to_excel(writer, sheet_name='Population')
 
         # Generate and write candidate sites data on excel file
-        print(f"[+] Writing candidate sites data on {filename}...")
+        print(f"[*] Writing candidate sites data on {filename}...")
         data_candidate_sites = generate_candidate_sites(data_population, number_candidate_sites)
         data_candidate_sites_x = [coord[0] for coord in data_candidate_sites]
         data_candidate_sites_y = [coord[1] for coord in data_candidate_sites]
