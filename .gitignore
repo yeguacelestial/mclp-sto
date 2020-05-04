@@ -278,5 +278,6 @@ TSWLatexianTemp*
 # Other
 *.pdf
 .vscode
-instances/
+*_instances/
 *.xlsx
+test.py
