@@ -251,9 +251,8 @@ def mclp(population_coordinates, candidate_sites_coordinates, S, radius, instanc
 
         return opt_sites, objective
 
-    except:
-        raise
-        #print("[-] Error: this problem is infeasible.\n\n")
+    except AttributeError:
+        print("[-] Error: Problem is unfeasible.")
 
 
 def delete_last_line():
