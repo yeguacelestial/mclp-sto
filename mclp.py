@@ -123,6 +123,9 @@ def mclp(number_of_sites, radius, instance_file):
     candidate_sites_coordinates = data[1]
     mclp_ch(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
 
+    # Solve MCLP by LS (Local Search Heuristic)
+
+
 
 def sorted_ls(path):
     mtime = lambda f: os.stat(os.path.join(path, f)).st_mtime
@@ -232,15 +235,15 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
     try:
         # End timer
         time_elapsed = time.clock() - time_start
-        objective = m.objVal
+        objective_function = int(m.objVal)
 
         # If objective function is less or equal than 0:
-        if objective <= 0: 
-            objective = 0
+        if objective_function <= 0: 
+            objective_function = 0
             print("[-] Couldn't maximize this instance.")
 
         # OUTPUT
-        print(f"[+] Objective Function - Population covered: {objective}")
+        print(f"[+] Objective Function - Population covered: {objective_function}")
         print(f"[+] Execution time: {time_elapsed}s\n")
 
         # Get solution data
@@ -251,7 +254,7 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
                     solution.append(int(v.varName[1:]))
         opt_sites = candidate_sites_coordinates[solution]
 
-        # Fixed solution with nodes for Excel files (starting from 1 instead of 0)
+        # Fixed solution with nodes for Excel files (starting from index 1 instead of 0)
         solution_excel = []
         for node in solution:
             node += 1
@@ -260,9 +263,13 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
         print(f"[*] Chosen sites (Coordinates):\n {opt_sites}")
         print(f"[*] Chosen sites (nodes):\n {solution_excel}")
 
-        return opt_sites, objective
+        # Associate fixed node with each coordinate
+        objective_coordinates = list(zip(solution_excel, opt_sites))
+
+        return objective_coordinates, objective_function
 
     except AttributeError:
+        raise
         print("[-] Error: Problem is unfeasible.")
 
 
