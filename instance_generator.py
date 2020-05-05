@@ -27,7 +27,14 @@ def main():
 
     options = get_input[0]
     arguments = get_input[1]
-    
+
+    options_dict = vars(options)
+    options_values = options_dict.values()
+
+    if None in options_values:
+        print("[*] Use 'instance_generator -h' to get information of use.")
+        exit()
+
     try:
         size = options.size
         instances = options.instances
