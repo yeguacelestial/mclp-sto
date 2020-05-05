@@ -121,10 +121,16 @@ def mclp(number_of_sites, radius, instance_file):
     data = read_data(instance_file)
     population_coordinates = data[0]
     candidate_sites_coordinates = data[1]
-    mclp_ch(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
 
+    ch_data = mclp_ch(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
+
+    objFunc_val = ch_data[0]
+    objFunc_coordinates = ch_data[1]
+    dist_matrix_copy = ch_data[2] 
+    dist_matrix_boolean = ch_data[3]
+    
+    print(objFunc_val, objFunc_coordinates, dist_matrix_copy, dist_matrix_boolean)
     # Solve MCLP by LS (Local Search Heuristic)
-
 
 
 def sorted_ls(path):
@@ -197,6 +203,7 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
     # Create distance matrix
     from scipy.spatial.distance import cdist
     dist_matrix = cdist(population_coordinates, candidate_sites_coordinates, 'euclidean').astype(int)
+    dist_matrix_copy = dist_matrix.copy() # Create a copy of distance matrix values
 
     print("[*] Distance matrix: ")
     print(dist_matrix)
@@ -205,7 +212,8 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
     mask1 = dist_matrix <= radius
     dist_matrix[mask1] = 1  # Stores '1' if dist_matrix value is less than radius
     dist_matrix[~mask1] = 0 # Stores '0' if dist_matrix value is greater than radius
-        
+    dist_matrix_boolean = dist_matrix.copy() # Create a copy of distance matrix boolean values
+
     # Add variables
     x = {}
     y = {}
@@ -235,15 +243,15 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
     try:
         # End timer
         time_elapsed = time.clock() - time_start
-        objective_function = int(m.objVal)
+        objective_function_value = int(m.objVal)
 
         # If objective function is less or equal than 0:
-        if objective_function <= 0: 
-            objective_function = 0
+        if objective_function_value <= 0: 
+            objective_function_value = 0
             print("[-] Couldn't maximize this instance.")
 
         # OUTPUT
-        print(f"[+] Objective Function - Population covered: {objective_function}")
+        print(f"[+] Objective Function - Population covered: {objective_function_value}")
         print(f"[+] Execution time: {time_elapsed}s\n")
 
         # Get solution data
@@ -264,12 +272,11 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
         print(f"[*] Chosen sites (nodes):\n {solution_excel}")
 
         # Associate fixed node with each coordinate
-        objective_coordinates = list(zip(solution_excel, opt_sites))
+        objective_function_coordinates = list(zip(solution_excel, opt_sites))
 
-        return objective_coordinates, objective_function
+        return objective_function_value, objective_function_coordinates, dist_matrix_copy, dist_matrix_boolean
 
     except AttributeError:
-        raise
         print("[-] Error: Problem is unfeasible.")
 
 
