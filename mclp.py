@@ -1,23 +1,36 @@
 """
 MAXIMUM COVERING LOCATION PROBLEM - Constructive Heuristic and Local Search Heuristic
-*** INPUT:
+PROGRAM INPUT:
 * Instance >> coord
 * Number of sites to select >> S
 * Service radius of each site >> radius
 * Desired population to cover >> M
 *********************************************
-*** Constructive Heuristic:
-          * Create empty solution -> sites = [] 
-          * Generate all candidate sites under specified radius
-          * Evaluate objective function of these sites -> sites_OF = [of-1, of-2,...,of-n]
-          * for site in range(sites):
+Constructive Heuristic:
+        * Create empty solution -> sites = [] 
+        * Generate all candidate sites under specified radius
+        * Evaluate objective function of these sites -> sites_OF = [of-1, of-2,...,of-n]
+        * for site in range(sites):
               if M covered is greater than 0:
                   Pick the site with the MAX objective function, and add to solution -> sites.append(max_of(site))
               else:
                   end for loop
-          * Return sites
+        * Return sites
 *********************************************
-*** OUTPUT:
+Local Search Heuristic
+        INPUT:
+            * CONSTRUCTIVE HEURISTIC Solution
+                -> Objective function
+                -> Objective function nodes
+            * FREE Candidate sites
+            * Distance matrix
+        OUTPUT:
+            * LOCAL SEARCH Solution
+                -> Objective function
+                -> Objective function nodes
+            * Computation time
+*********************************************
+PROGRAM OUTPUT:
 * Objective function of Constructive Heuristic -> Total of the population covered
 * Execution time of the Constructive Heuristic -> cpu_sec_ch
 * Objective function of Local Search Heuristic -> Total of the population covered IMPROVED
@@ -25,7 +38,7 @@ MAXIMUM COVERING LOCATION PROBLEM - Constructive Heuristic and Local Search Heur
 *********************************************
 NOTE: Euclidean distance => AC = sqrt(AB² + BC²) = sqrt( (x2 - x1)² + (y2 - y1)² )
 *********************************************
-NOTE: About Local Search approach: Okay. You already have the candidate sites of an specific instance. The Greddy Adding with Substitution Algorithm iterate each "free" site and compares the objective function (population covered by that site) it to a site inside the given solution. That could work. Remember. Local Search seeks to improve a given solution by making small movements on it.  
+NOTE: About Local Search approach: Okay. You already have the candidate sites of an specific instance. The Greddy Adding with Substitution Algorithm iterate each "free" site and compares the objective function (population covered by that site) to a site inside the given solution. That could work. Remember. Local Search seeks to improve a given solution by making small movements on it.  
 """
 # TODO: Code Local Search Heuristic
 
@@ -124,13 +137,13 @@ def mclp(number_of_sites, radius, instance_file):
 
     ch_data = mclp_ch(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
 
-    objFunc_val = ch_data[0]
-    objFunc_coordinates = ch_data[1]
+    objective_function_value = ch_data[0]
+    objective_function_coordinates = ch_data[1]
     dist_matrix_copy = ch_data[2] 
-    dist_matrix_boolean = ch_data[3]
-    
-    print(objFunc_val, objFunc_coordinates, dist_matrix_copy, dist_matrix_boolean)
+    free_candidate_sites = ch_data[3]
+
     # Solve MCLP by LS (Local Search Heuristic)
+    mclp_ls(objective_function_value, objective_function_coordinates, dist_matrix_copy, free_candidate_sites)
 
 
 def sorted_ls(path):
@@ -212,7 +225,6 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
     mask1 = dist_matrix <= radius
     dist_matrix[mask1] = 1  # Stores '1' if dist_matrix value is less than radius
     dist_matrix[~mask1] = 0 # Stores '0' if dist_matrix value is greater than radius
-    dist_matrix_boolean = dist_matrix.copy() # Create a copy of distance matrix boolean values
 
     # Add variables
     x = {}
@@ -271,13 +283,42 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
         print(f"[*] Chosen sites (Coordinates):\n {opt_sites}")
         print(f"[*] Chosen sites (nodes):\n {solution_excel}")
 
+        # Filter free candidate sites
+        free_candidate_sites = []
+        for site in candidate_sites_coordinates:
+            if site not in opt_sites:
+                free_candidate_sites.append(site)
+        print(f"[*] Free candidate sites:\n {free_candidate_sites}")
+
         # Associate fixed node with each coordinate
         objective_function_coordinates = list(zip(solution_excel, opt_sites))
 
-        return objective_function_value, objective_function_coordinates, dist_matrix_copy, dist_matrix_boolean
+        return objective_function_value, objective_function_coordinates, dist_matrix_copy, free_candidate_sites
 
     except AttributeError:
         print("[-] Error: Problem is unfeasible.")
+
+
+def mclp_ls(objective_function_value, objective_function_coordinates, dist_matrix, free_candidate_sites):
+    """
+        Local Search Heuristic
+        INPUT:
+            * CONSTRUCTIVE HEURISTIC Solution
+                * objective_function_value ==> Objective function
+                * objective_function_coordinates ==> Objective function nodes
+            * free_candidate_sites ==> FREE Candidate sites
+            * dist_matrix ==> Distance matrix
+        OUTPUT:
+            * LOCAL SEARCH Solution
+                -> Objective function
+                -> Objective function nodes
+            * Computation time
+    """
+    print("\n\n[*] LOCAL SEARCH HEURISTIC")
+    print(f"[*] Current Objective function = {objective_function_value}")
+    print(f"[*] Current objective function coordinates = {objective_function_coordinates}")
+    print(f"[*] Distance matrix = \n {dist_matrix}")
+    print(f"[*] Current free candidate sites = \n {free_candidate_sites}")
 
 
 def delete_last_line():
