@@ -62,7 +62,7 @@ def main():
     number_of_sites = options.sites
     radius = options.radius
 
-    # Instances directory
+    # Process multiple instances
     try:
         # Sort excel files by modified date
         instances_directory_list = sorted_ls(instances_directory)
@@ -70,24 +70,20 @@ def main():
         # Read each instance file
         for instance in instances_directory_list:
             instance_file = f'{instances_directory}/{instance}'
-            data = read_data(instance_file)
 
-            population_coordinates = data[0]
-            candidate_sites_coordinates = data[1]
-
-            # Solve MCLP
-            mclp(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
+            # Solve MCLP - Constructive Heuristic
+            mclp(number_of_sites, radius, instance_file)
+        
+        print("\n[+] Done.")
             
-    # Single file
+    # Process single file instance
     except NotADirectoryError as e:
         instance_file = f'{instances_directory}'
-        data = read_data(instance_file)
-
-        population_coordinates = data[0]
-        candidate_sites_coordinates = data[1]
 
         # Solve MCLP
-        mclp(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
+        mclp(number_of_sites, radius, instance_file)
+
+        print("\n[+] Done.")
 
     except FileNotFoundError:
         print("[-] Error: File not found.")
@@ -120,6 +116,14 @@ def getInput():
     return options, args
 
 
+def mclp(number_of_sites, radius, instance_file):
+    # Solve MCLP by CH (Constructive Heuristic)
+    data = read_data(instance_file)
+    population_coordinates = data[0]
+    candidate_sites_coordinates = data[1]
+    mclp_ch(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
+
+
 def sorted_ls(path):
     mtime = lambda f: os.stat(os.path.join(path, f)).st_mtime
     return list(sorted(os.listdir(path), key=mtime))
@@ -143,9 +147,9 @@ def read_data(file):
     return population_coordinates, candidate_sites_coordinates
 
 
-def mclp(population_coordinates, candidate_sites_coordinates, S, radius, instance_name):
+def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, instance_name):
     """
-    SOLVE MCLP
+    SOLVE MCLP (CONSTRUCTIVE HEURISTIC)
     *Input:
         population_coordinates => Coordinates of population nodes
         candidate_sites_coordinates => Coordinates of free candidate sites
@@ -193,7 +197,6 @@ def mclp(population_coordinates, candidate_sites_coordinates, S, radius, instanc
 
     print("[*] Distance matrix: ")
     print(dist_matrix)
-    print(f"[*] Distance between node 1 and site 1: {dist_matrix[0][0]}")
 
     # Generate boolean matrix for each candidate under radius
     mask1 = dist_matrix <= radius
@@ -254,8 +257,8 @@ def mclp(population_coordinates, candidate_sites_coordinates, S, radius, instanc
             node += 1
             solution_excel.append(node)
 
-        print(f"[*] Chosen sites:\n {opt_sites}")
-        print(f"[*] Solution nodes set:\n {solution_excel}")
+        print(f"[*] Chosen sites (Coordinates):\n {opt_sites}")
+        print(f"[*] Chosen sites (nodes):\n {solution_excel}")
 
         return opt_sites, objective
 
