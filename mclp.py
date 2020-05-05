@@ -31,15 +31,17 @@ NOTE: About Local Search approach: Okay. You already have the candidate sites of
 # TODO: Code Local Search Heuristic
 
 import colorama
+import numpy as np
+import openpyxl
+import os
+import pandas as pd
+import time
+
 from colorama import Fore, Back, Style
 from gurobipy import *
-import numpy as np
-import os
+from openpyxl import load_workbook
 from os import listdir
 from optparse import OptionParser
-import time
-import openpyxl
-from openpyxl import load_workbook
 
 
 def main():
@@ -53,9 +55,9 @@ def main():
     # Instances directory
     try:
         instances_directory = options.directory
-        candidate_sites = int(options.candidate_sites)
-        number_of_sites = int(options.sites)
-        radius = int(options.radius)
+        candidate_sites = options.candidate_sites
+        number_of_sites = options.sites
+        radius = options.radius
 
         # Sort excel files by modified date
         instances_directory_list = sorted_ls(instances_directory)
@@ -145,48 +147,6 @@ def read_data(file):
         coordinates_list.append((row[0].value,row[1].value,row[2].value))
     
     return coordinates_list
-
-
-def generate_candidate_sites(coordinates, S):
-    """
-    Generate candidate sites inside a convex hull of given coordinates
-    INPUT:
-      coordinates => List of coordinates to work on
-      S => Number of sites to generate
-    RETURN:
-      candidate_sites list
-    """
-
-    # From array to numpy array
-    coordinates = np.array(coordinates)
-
-    # Create convex hull
-    from scipy.spatial import ConvexHull
-    hull = ConvexHull(coordinates)
-
-    # Create polygon points
-    polygon_points = coordinates[hull.vertices]
-    from shapely.geometry import Polygon
-    poly = Polygon(polygon_points)
-    
-    # Min and max coordinates bounds
-    min_x, min_y, max_x, max_y = poly.bounds
-
-    # Generate candidate sites
-    from shapely.geometry import Point
-    from numpy import random
-
-    sites = []
-    while len(sites) < S:
-        random_point = Point([random.uniform(min_x, max_x),
-                              random.uniform(min_y,max_y)])
-        if (random_point.within(poly)):
-            sites.append(random_point)
-
-    sites_coordinates = np.array([(site.x,site.y) for site in sites])
-    sites_coordinates = sites_coordinates.astype(int)
-
-    return sites_coordinates
 
 
 def mclp(coordinates, S, radius, M, instance_name):
