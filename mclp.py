@@ -189,7 +189,7 @@ def mclp(population_coordinates, candidate_sites_coordinates, S, radius, instanc
 
     # Create distance matrix
     from scipy.spatial.distance import cdist
-    dist_matrix = cdist(population_coordinates, candidate_sites_coordinates, 'euclidean')
+    dist_matrix = cdist(population_coordinates, candidate_sites_coordinates, 'euclidean').astype(int)
 
     print("[*] Distance matrix: ")
     print(dist_matrix)
