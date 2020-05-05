@@ -189,9 +189,11 @@ def mclp(population_coordinates, candidate_sites_coordinates, S, radius, instanc
 
     # Create distance matrix
     from scipy.spatial.distance import cdist
-    dist_matrix = cdist(population_coordinates, candidate_sites_coordinates, 'euclidean').astype(int)
+    dist_matrix = cdist(population_coordinates, candidate_sites_coordinates, 'euclidean')
+
     print("[*] Distance matrix: ")
     print(dist_matrix)
+    print(f"[*] Distance between node 1 and site 1: {dist_matrix[0][0]}")
 
     # Generate boolean matrix for each candidate under radius
     mask1 = dist_matrix <= radius
@@ -246,8 +248,14 @@ def mclp(population_coordinates, candidate_sites_coordinates, S, radius, instanc
                     solution.append(int(v.varName[1:]))
         opt_sites = candidate_sites_coordinates[solution]
 
+        # Fixed solution with nodes for Excel files (starting from 1 instead of 0)
+        solution_excel = []
+        for node in solution:
+            node += 1
+            solution_excel.append(node)
+
         print(f"[*] Chosen sites:\n {opt_sites}")
-        print(f"[*] Solution set: {solution}")
+        print(f"[*] Solution nodes set:\n {solution_excel}")
 
         return opt_sites, objective
 
