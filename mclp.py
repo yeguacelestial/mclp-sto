@@ -29,6 +29,24 @@ Local Search Heuristic
                 -> Objective function
                 -> Objective function nodes
             * Computation time
+        ALGORITHM:
+            * current_objF_value => CH Solution (Objective function)
+            * current_objF_nodes => CH Solution (Objective function nodes ([Site1, Site2, Site3...]))
+            * current_free_sites => FREE Candidate sites ([Site4, Site5, Site6...])
+    
+            * for node in current_objF_nodes:
+                for site in current_free_sites:
+                    Replace node with site -> new_objF_nodes
+                    Compute objective function of current_objF_nodes -> new_objF_value
+
+                    if new_objF > current_objF_value:
+                        Update current_objF_value -> new_objF_value
+                        Update current_objF_nodes -> new_objF_nodes
+                        return new_objF_value, new_objF_nodes
+                        Stop iterating
+                    else:
+                        Keep iterating until a better solution is found
+
 *********************************************
 PROGRAM OUTPUT:
 * Objective function of Constructive Heuristic -> Total of the population covered
