@@ -162,9 +162,10 @@ def mclp(number_of_sites, radius, instance_file):
     objective_function_coordinates = ch_data[1]
     dist_matrix_copy = ch_data[2] 
     free_candidate_sites = ch_data[3]
+    dist_matrix_boolean_copy = ch_data[4]
 
     # Solve MCLP by LS (Local Search Heuristic)
-    mclp_ls(objective_function_value, objective_function_coordinates, dist_matrix_copy, free_candidate_sites)
+    mclp_ls(objective_function_value, objective_function_coordinates, dist_matrix_copy, free_candidate_sites, dist_matrix_boolean_copy)
 
 
 def sorted_ls(path):
@@ -240,6 +241,7 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
     mask1 = dist_matrix <= radius
     dist_matrix[mask1] = 1  # Stores '1' if dist_matrix value is less than radius
     dist_matrix[~mask1] = 0 # Stores '0' if dist_matrix value is greater than radius
+    dist_matrix_boolean_copy = dist_matrix.copy()
 
     # Add variables
     x = {}
@@ -304,14 +306,14 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
         # Associate fixed node with each coordinate
         objective_function_coordinates = list(zip(solution_excel, opt_sites))
 
-        return objective_function_value, objective_function_coordinates, dist_matrix_copy, free_candidate_sites
+        return objective_function_value, objective_function_coordinates, dist_matrix_copy, free_candidate_sites, dist_matrix_boolean_copy
 
     except AttributeError:
         print("[-] Error: Problem is unfeasible.")
         exit()
 
 
-def mclp_ls(objective_function_value, objective_function_coordinates, dist_matrix, free_candidate_sites):
+def mclp_ls(objective_function_value, objective_function_coordinates, dist_matrix, free_candidate_sites, dist_matrix_boolean_copy):
     """
         Local Search Heuristic
         INPUT:
@@ -330,6 +332,8 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
     print(f"[*] Current objective function = {objective_function_value}")
     print(f"[*] Current objective function coordinates = {objective_function_coordinates}")
     print(f"[*] Current free candidate sites = {free_candidate_sites}")
+    print(f"[*] Distance matrix: \n{dist_matrix}")
+    print(f"[*] Boolean distance matrix (True if node inside radius of site, False if not): \n{dist_matrix_boolean_copy}")
 
     """
     ALGORITHM:
@@ -348,6 +352,7 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
                         return new_objF_value, new_objF_nodes
                         Stop iterating
                     else:
+                        Revert previous node replaced in current_objF_nodes
                         Keep iterating until a better solution is found
     """
 
@@ -356,14 +361,30 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
     current_objF_nodes = objective_function_coordinates.copy()
     current_free_sites = free_candidate_sites.copy()
 
+    # Create list of indexes for distance matrix
+    current_objF_nodes_indexes = []
+    for node in current_objF_nodes:
+        current_objF_nodes_indexes.append(node[0]-1)
+    print(f"[*] Current objective function indexes (for dist matrix): {current_objF_nodes_indexes}")
+
+    # Create list of indexes of FREE candidate sites
+
+
     # Initialize new variables
     new_objF_nodes = []
     new_objF_value = 0
 
     # START TIMER
     time_start = time.clock()
-    
+
     # Algorithm
+    for node in current_objF_nodes:
+        for site in current_free_sites:
+            # Replace node with site
+            current_objF_nodes[current_objF_nodes.index(node)] = site
+
+            # Compute objective function of current_objF_nodes
+
 
     # END TIMER
     time_elapsed = time.clock() - time_start
