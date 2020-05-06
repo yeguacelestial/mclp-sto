@@ -279,7 +279,7 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
 
         # OUTPUT
         print(f"[+] Objective Function - Population covered: {objective_function_value}")
-        print(f"[+] Execution time: {time_elapsed}s\n")
+        print(f"[+] CH Execution time: {time_elapsed}s\n")
 
         # Get solution data
         solution = []
@@ -360,7 +360,14 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
     new_objF_nodes = []
     new_objF_value = 0
 
+    # START TIMER
+    time_start = time.clock()
+    
     # Algorithm
+
+    # END TIMER
+    time_elapsed = time.clock() - time_start
+    print(f"[+] LS Execution Time: {time_elapsed}s")
 
 
 def delete_last_line():
