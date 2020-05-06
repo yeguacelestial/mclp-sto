@@ -56,7 +56,10 @@ PROGRAM OUTPUT:
 *********************************************
 NOTE: Euclidean distance => AC = sqrt(AB² + BC²) = sqrt( (x2 - x1)² + (y2 - y1)² )
 *********************************************
-NOTE: About Local Search approach: Okay. You already have the candidate sites of an specific instance. The Greddy Adding with Substitution Algorithm iterate each "free" site and compares the objective function (population covered by that site) to a site inside the given solution. That could work. Remember. Local Search seeks to improve a given solution by making small movements on it.  
+NOTE: About Local Search approach: Okay. You already have the candidate sites of an specific instance. The Greddy Adding
+with Substitution Algorithm iterate each "free" site and compares the objective function (population covered by that site)
+to a site inside the given solution. That could work. Remember. Local Search seeks to improve a given solution
+by making small movements on it.  
 """
 # TODO: Code Local Search Algorithm
 
