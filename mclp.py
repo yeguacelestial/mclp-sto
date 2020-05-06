@@ -58,7 +58,7 @@ NOTE: Euclidean distance => AC = sqrt(AB² + BC²) = sqrt( (x2 - x1)² + (y2 - y
 *********************************************
 NOTE: About Local Search approach: Okay. You already have the candidate sites of an specific instance. The Greddy Adding with Substitution Algorithm iterate each "free" site and compares the objective function (population covered by that site) to a site inside the given solution. That could work. Remember. Local Search seeks to improve a given solution by making small movements on it.  
 """
-# TODO: Code Local Search Heuristic
+# TODO: Code Local Search Algorithm
 
 import colorama
 import numpy as np
@@ -292,14 +292,11 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
             node += 1
             solution_excel.append(node)
 
-        print(f"[+] CANDIDATE SITES COORDINATES:\n{candidate_sites_coordinates}")
-        print(f"[+] OPT SITES:\n {opt_sites}")
         # Filter free candidate sites
         free_candidate_sites = []
         for site in candidate_sites_coordinates:
             if site not in opt_sites:
                 free_candidate_sites.append(site)
-        print(f"[+] FREE CANDIDATE SITES:\n{free_candidate_sites}")
 
         # Associate fixed node with each coordinate
         objective_function_coordinates = list(zip(solution_excel, opt_sites))
@@ -330,6 +327,37 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
     print(f"[*] Current objective function = {objective_function_value}")
     print(f"[*] Current objective function coordinates = {objective_function_coordinates}")
     print(f"[*] Current free candidate sites = {free_candidate_sites}")
+
+    """
+    ALGORITHM:
+            * current_objF_value => CH Solution (Objective function)
+            * current_objF_nodes => CH Solution (Objective function nodes ([Site1, Site2, Site3...]))
+            * current_free_sites => FREE Candidate sites ([Site4, Site5, Site6...])
+    
+            * for node in current_objF_nodes:
+                for site in current_free_sites:
+                    Replace node with site -> new_objF_nodes
+                    Compute objective function of current_objF_nodes -> new_objF_value
+
+                    if new_objF > current_objF_value:
+                        Update current_objF_value -> new_objF_value
+                        Update current_objF_nodes -> new_objF_nodes
+                        return new_objF_value, new_objF_nodes
+                        Stop iterating
+                    else:
+                        Keep iterating until a better solution is found
+    """
+
+    # Create input copies
+    current_objF_value = int(objective_function_value)
+    current_objF_nodes = objective_function_coordinates.copy()
+    current_free_sites = free_candidate_sites.copy()
+
+    # Initialize new variables
+    new_objF_nodes = []
+    new_objF_value = 0
+
+    # Algorithm
 
 
 def delete_last_line():
