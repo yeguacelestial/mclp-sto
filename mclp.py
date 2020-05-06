@@ -228,16 +228,10 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
     print(f'[*] Number of free sites: {J_set}')
     print(f'[*] Number of sites to be selected: {S}')
 
-    print(f"[*] Coordinates: \n{population_coordinates}")
-    print(f"[*] Candidate sites:\n {candidate_sites_coordinates}")
-
     # Create distance matrix
     from scipy.spatial.distance import cdist
     dist_matrix = cdist(population_coordinates, candidate_sites_coordinates, 'euclidean').astype(int)
     dist_matrix_copy = dist_matrix.copy() # Create a copy of distance matrix values
-
-    print("[*] Distance matrix: ")
-    print(dist_matrix)
 
     # Generate boolean matrix for each candidate under radius
     mask1 = dist_matrix <= radius
@@ -298,15 +292,14 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
             node += 1
             solution_excel.append(node)
 
-        print(f"[*] Chosen sites (Coordinates):\n {opt_sites}")
-        print(f"[*] Chosen sites (nodes):\n {solution_excel}")
-
+        print(f"[+] CANDIDATE SITES COORDINATES:\n{candidate_sites_coordinates}")
+        print(f"[+] OPT SITES:\n {opt_sites}")
         # Filter free candidate sites
         free_candidate_sites = []
         for site in candidate_sites_coordinates:
             if site not in opt_sites:
                 free_candidate_sites.append(site)
-        print(f"[*] Free candidate sites:\n {free_candidate_sites}")
+        print(f"[+] FREE CANDIDATE SITES:\n{free_candidate_sites}")
 
         # Associate fixed node with each coordinate
         objective_function_coordinates = list(zip(solution_excel, opt_sites))
@@ -315,6 +308,7 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
 
     except AttributeError:
         print("[-] Error: Problem is unfeasible.")
+        exit()
 
 
 def mclp_ls(objective_function_value, objective_function_coordinates, dist_matrix, free_candidate_sites):
@@ -332,11 +326,10 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
                 -> Objective function nodes
             * Computation time
     """
-    print("\n\n[*] LOCAL SEARCH HEURISTIC")
-    print(f"[*] Current Objective function = {objective_function_value}")
+    print("\n[*] LOCAL SEARCH HEURISTIC")
+    print(f"[*] Current objective function = {objective_function_value}")
     print(f"[*] Current objective function coordinates = {objective_function_coordinates}")
-    print(f"[*] Distance matrix = \n {dist_matrix}")
-    print(f"[*] Current free candidate sites = \n {free_candidate_sites}")
+    print(f"[*] Current free candidate sites = {free_candidate_sites}")
 
 
 def delete_last_line():
