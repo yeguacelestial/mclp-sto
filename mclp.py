@@ -298,10 +298,11 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
             solution_excel.append(node)
 
         # Filter free candidate sites
+        candidate_sites_coordinates = list(candidate_sites_coordinates)
         free_candidate_sites = []
         for site in candidate_sites_coordinates:
             if site not in opt_sites:
-                free_candidate_sites.append(site)
+                free_candidate_sites.append((candidate_sites_coordinates.index(site), site))
 
         # Associate fixed node with each coordinate
         objective_function_coordinates = list(zip(solution_excel, opt_sites))
@@ -309,6 +310,7 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
         return objective_function_value, objective_function_coordinates, dist_matrix_copy, free_candidate_sites, dist_matrix_boolean_copy
 
     except AttributeError:
+        raise
         print("[-] Error: Problem is unfeasible.")
         exit()
 
@@ -333,7 +335,7 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
     print(f"[*] Current objective function coordinates = {objective_function_coordinates}")
     print(f"[*] Current free candidate sites = {free_candidate_sites}")
     print(f"[*] Distance matrix: \n{dist_matrix}")
-    print(f"[*] Boolean distance matrix (True if node inside radius of site, False if not): \n{dist_matrix_boolean_copy}")
+    print(f"[*] Boolean distance matrix (1 if node inside radius of site, 0 if not): \n{dist_matrix_boolean_copy}")
 
     """
     ALGORITHM:
@@ -355,7 +357,7 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
                         Revert previous node replaced in current_objF_nodes
                         Keep iterating until a better solution is found
     """
-
+    # TODO: Assocciate index of node in current_free_sites
     # Create input copies
     current_objF_value = int(objective_function_value)
     current_objF_nodes = objective_function_coordinates.copy()
