@@ -364,13 +364,12 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
     current_free_sites = free_candidate_sites.copy()
 
     # Create list of indexes for distance matrix
-    current_objF_nodes_indexes = []
-    for node in current_objF_nodes:
-        current_objF_nodes_indexes.append(node[0]-1)
+    current_objF_nodes_indexes = [node[0]-1 for node in current_objF_nodes]
     print(f"[*] Current objective function indexes (for dist matrix): {current_objF_nodes_indexes}")
 
-    # Create list of indexes of FREE candidate sites
-
+    # Create list of indexes of FREE candidate sites for distance matrix
+    current_free_sites_indexes = [site[0] for site in current_free_sites]
+    print(f"[*] Current free sites indexes (for dist matrix): {current_free_sites_indexes}")
 
     # Initialize new variables
     new_objF_nodes = []
