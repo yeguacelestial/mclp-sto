@@ -382,12 +382,19 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
     time_start = time.clock()
 
     # Algorithm
-    # Compute Objective Functions of Column 1 (Site 1)
-    boolean_indexes = np.where(dist_matrix_boolean[:, 1] == True)    
-    for index in boolean_indexes:
-        site_objective_functions = dist_matrix[index, 1].tolist()
-    print(site_objective_functions)
-    print(sum(site_objective_functions))
+    # Compute Objective Function of a given site, conidering the boolean distance matrix
+    def compute_site_OF(site):
+        boolean_indexes = np.where(dist_matrix_boolean[:, site] == True)    
+        for index in boolean_indexes:
+            site_objective_functions = dist_matrix[index, site].tolist()
+        
+        site_OF_sum = sum(site_objective_functions)
+        return site_objective_functions, site_OF_sum
+
+    # Site 1 (Example for debugging)
+    site1_data = compute_site_OF(1)
+    site1_OF_results = site1_data[0]
+    site1_OF_sum = site1_OF_data[1]
 
     # Do it in loop
     for site in current_objF_nodes_indexes:
