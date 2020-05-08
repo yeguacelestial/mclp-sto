@@ -299,9 +299,11 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
 
         # Filter free candidate sites
         free_candidate_sites = []
+        candidate_sites_coordinates = candidate_sites_coordinates.tolist()
         for site in candidate_sites_coordinates:
             if site not in opt_sites:
-                free_candidate_sites.append(site)
+                site_index = candidate_sites_coordinates.index(site)
+                free_candidate_sites.append((site_index, site))
 
         # Associate fixed node with each coordinate
         objective_function_coordinates = list(zip(solution_excel, opt_sites))
