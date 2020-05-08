@@ -374,14 +374,6 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
     current_free_sites_indexes = [site[0] for site in current_free_sites]
     print(f"[*] Current free sites indexes (for dist matrix): {current_free_sites_indexes}")
 
-    # Associate boolean with objective function in distance matrix
-    dist_matrix_copy = list(dist_matrix)
-    dist_matrix_boolean_copy = list(dist_matrix_boolean)
-    dist_matrix_with_booleans = list(zip(dist_matrix_boolean_copy, dist_matrix_copy))
-
-    # Convert dist_matrix_with booleans to numpy array
-    dist_matrix_with_booleans = array(dist_matrix_with_booleans)
-
     # Initialize new variables
     new_objF_nodes = []
     new_objF_value = 0
@@ -390,7 +382,14 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
     time_start = time.clock()
 
     # Algorithm
+    # Compute Objective Functions of Column 1 (Site 1)
+    boolean_indexes = np.where(dist_matrix_boolean[:, 1] == True)    
+    for index in boolean_indexes:
+        site_objective_functions = dist_matrix[index, 1].tolist()
+    print(site_objective_functions)
+    print(sum(site_objective_functions))
 
+    # Do it in loop
     for site in current_objF_nodes_indexes:
         for free_site in current_free_sites_indexes:
             pass
