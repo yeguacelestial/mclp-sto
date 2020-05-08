@@ -211,7 +211,7 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
     time_start = time.clock()
 
     # START OF CONSTRUCTIVE HEURISTIC
-
+    print("[*] *** CONSTRUCTIVE HEURISTIC ***")
     # Build Model
     m = Model()
 
@@ -272,8 +272,8 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
     try:
         # End timer
         time_elapsed = time.clock() - time_start
-        objective_function_value = int(m.objVal)
 
+        objective_function_value = int(m.objVal)
         # If objective function is less or equal than 0:
         if objective_function_value <= 0: 
             objective_function_value = 0
@@ -329,7 +329,7 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
                 -> Objective function nodes
             * Computation time
     """
-    print("\n[*] LOCAL SEARCH HEURISTIC")
+    print("\n[*] *** LOCAL SEARCH HEURISTIC ***")
     print(f"[*] Current objective function = {objective_function_value}")
     print(f"[*] Current objective function coordinates = {objective_function_coordinates}")
     print(f"[*] Current free candidate sites = {free_candidate_sites}")
