@@ -72,6 +72,7 @@ import time
 
 from colorama import Fore, Back, Style
 from gurobipy import *
+from numpy import array
 from openpyxl import load_workbook
 from os import listdir
 from optparse import OptionParser
@@ -220,7 +221,6 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
     #     delete_last_line()
 
     # Cast population and candidates sites arrays to numpy arrays
-    from numpy import array
     population_coordinates = array(population_coordinates)
     candidate_sites_coordinates = array(candidate_sites_coordinates)
 
@@ -371,13 +371,16 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
     print(f"[*] Current objective function indexes (for dist matrix): {current_objF_nodes_indexes}")
 
     # Create list of indexes of FREE candidate sites for distance matrix
-    current_free_sites_indexes = [site for site in current_free_sites]
+    current_free_sites_indexes = [site[0] for site in current_free_sites]
     print(f"[*] Current free sites indexes (for dist matrix): {current_free_sites_indexes}")
 
     # Associate boolean with objective function in distance matrix
     dist_matrix_copy = list(dist_matrix)
     dist_matrix_boolean_copy = list(dist_matrix_boolean)
     dist_matrix_with_booleans = list(zip(dist_matrix_boolean_copy, dist_matrix_copy))
+
+    # Convert dist_matrix_with booleans to numpy array
+    dist_matrix_with_booleans = array(dist_matrix_with_booleans)
 
     # Initialize new variables
     new_objF_nodes = []
@@ -387,6 +390,10 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
     time_start = time.clock()
 
     # Algorithm
+
+    for site in current_objF_nodes_indexes:
+        for free_site in current_free_sites_indexes:
+            pass
     
     # END TIMER
     time_elapsed = time.clock() - time_start
