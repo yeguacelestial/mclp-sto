@@ -337,8 +337,6 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
     print(f"[*] Current objective function = {objective_function_value}")
     print(f"[*] Current objective function coordinates = {objective_function_coordinates}")
     print(f"[*] Current free candidate sites = {free_candidate_sites}")
-    print(f"[*] Distance matrix: \n{dist_matrix}")
-    print(f"[*] Boolean distance matrix (1 if node inside radius of site, 0 if not): \n{dist_matrix_boolean}")
 
     """
     ALGORITHM:
@@ -361,7 +359,6 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
                             Revert previous node replaced in current_objF_nodes
                             Keep iterating until a better solution is found
     """
-    # TODO: Refactor algorithm, with given input
 
     # Create input copies
     current_objF_value = int(objective_function_value)
@@ -380,16 +377,7 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
     time_start = time.clock()
 
     # Algorithm
-    # Compute Objective Function of a given site, conidering the boolean distance matrix
-    def compute_site_OF(site):
-        boolean_indexes = np.where(dist_matrix_boolean[:, site] == True)
-        for index in boolean_indexes:
-            site_objective_functions = dist_matrix[index, site].tolist()
-
-        site_OF_sum = sum(site_objective_functions)
-        return site_objective_functions, site_OF_sum
-
-    # Compute covered nodes of a given solution
+    # Compute OBJECTIVE FUNCTION and COVERED NODES of a given solution
     def compute_covered_nodes(solution):
         # Get covered nodes by current objective function
         covered_nodes = []
@@ -404,40 +392,19 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
 
         return covered_nodes, len(covered_nodes)
 
-    # Site 1 (Example for debugging)
-    site1_data = compute_site_OF(1)
-    site1_OF_results = site1_data[0]
-    site1_OF_sum = site1_data[1]
+    print(f"\n[*] CURRENT OBJECTIVE FUNCTION - VALUE => {objective_function_value}")
+    print(f"[*] CURRENT OBJECTIVE FUNCTION - NODES COVERED => {compute_covered_nodes(current_objF_nodes_indexes)[0]}")
 
-    print(f"[*] CURRENT OBJECTIVE FUNCTION: {objective_function_value}")
-
-    # Do it in loop
-    for i, site in enumerate(current_objF_nodes_indexes):
-        current_site_OF = compute_site_OF(site)[1]
-
-        for free_site in current_free_sites_indexes:
-            free_site_OF = compute_site_OF(free_site)[1]
-
-            # Just one more condition: if nodes are not covered already by another site...
-            if (free_site_OF > current_site_OF) and (free_site not in current_objF_nodes_indexes):
-                current_objF_nodes_indexes[i] = free_site
-                break
-            else:
-                pass
-    
-    # Compute final objective function
-    new_objF_value = 0
-    for site in current_objF_nodes_indexes:
-        site_OF = compute_site_OF(site)[0]
-        new_objF_value += len(site_OF)
+    # Evaluate in loop for current sites and free candidate sites
 
     # Get covered nodes by current objective function
     covered_population_data = compute_covered_nodes(current_objF_nodes_indexes)
     covered_population_nodes = covered_population_data[0]
     covered_population_objF = covered_population_data[1]
 
+    # New Solution output
     print(f"[*] NEW SOLUTION - COVERED POPULATION => {covered_population_nodes}")
-    print(f"[*] NEW SOLUTION - OBJECTIVE FUNCTION => {covered_population_objF}")
+    print(f"[*] NEW OBJECTIVE FUNCTION => {covered_population_objF}")
     
     # END TIMER
     time_elapsed = time.clock() - time_start
