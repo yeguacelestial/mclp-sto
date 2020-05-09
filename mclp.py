@@ -63,8 +63,7 @@ by making small movements on it.
 """
 
 # TODO: Now that you are able to get covered nodes by a given solution (set of sites), you can iterate between each free
-#       candidate sites and evaluate the different OBJECTIVE FUNCTIONS until all nodes are covered OR until all desired 
-#       facilities have been selected.
+#       candidate sites and evaluate the different OBJECTIVE FUNCTIONS until you found a better one than the current.
 
 import colorama
 import numpy as np
