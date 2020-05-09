@@ -374,15 +374,6 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
     current_free_sites_indexes = [site[0] for site in current_free_sites]
     print(f"[*] Current free sites indexes (for dist matrix): {current_free_sites_indexes}")
 
-    # Get covered nodes by current objective function
-    covered_nodes = []
-    for site in current_objF_nodes_indexes:
-        # Stores each node that is covered by site
-        covered_node_index = np.where(dist_matrix_boolean[:, site] == True)[0]
-        for node in covered_node_index:
-            covered_nodes.append(node)
-    print(covered_nodes)
-
     # START TIMER
     time_start = time.clock()
 
@@ -395,6 +386,21 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
 
         site_OF_sum = sum(site_objective_functions)
         return site_objective_functions, site_OF_sum
+
+    # Compute covered nodes of a given solution
+    def compute_covered_nodes(solution):
+        # Get covered nodes by current objective function
+        covered_nodes = []
+        for site in solution:
+            # Stores each node that is covered by site
+            covered_node_index = np.where(dist_matrix_boolean[:, site] == True)[0]
+            for node in covered_node_index:
+                covered_nodes.append(node)
+
+        # Remove duplicated nodes
+        covered_nodes = list(dict.fromkeys(covered_nodes))
+
+        return covered_nodes, len(covered_nodes)
 
     # Site 1 (Example for debugging)
     site1_data = compute_site_OF(1)
@@ -423,9 +429,14 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
         site_OF = compute_site_OF(site)[0]
         new_objF_value += len(site_OF)
 
-    print(f"[*] NEW SOLUTION => {new_objF_value},{current_objF_nodes_indexes}")
-    
+    # Get covered nodes by current objective function
+    covered_population_data = compute_covered_nodes(current_objF_nodes_indexes)
+    covered_population_nodes = covered_population_data[0]
+    covered_population_objF = covered_population_data[1]
 
+    print(f"[*] NEW SOLUTION - COVERED POPULATION => {covered_population_nodes}")
+    print(f"[*] NEW SOLUTION - OBJECTIVE FUNCTION => {covered_population_objF}")
+    
     # END TIMER
     time_elapsed = time.clock() - time_start
     print(f"[+] LS Execution Time: {time_elapsed}s")
