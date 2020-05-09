@@ -1,13 +1,15 @@
-import pandas as pd
+import numpy as np
 
-# Create Pandas dataframe from the data
-df = pd.DataFrame({'x': [10,20,30,450], 'y': [1,2,3,4]})
-df.index += 1
+a = np.array([[2,0,3],
+              [1,2,6],
+              [1,3,2],])
 
-# Create Pandas Excel writer using XlsxWriter as the engine.
-writer = pd.ExcelWriter('pandas_simple.xlsx', engine='xlsxwriter')
+row_locator = a[:,1]==2 # Rows where 2 is in the column 1
 
-# Write the data frame to the BytesIO object.
-df.to_excel(writer, sheet_name="Sheet1")
+row_values = []
 
-writer.save()
+for x in range(0, len(a)):
+    if row_locator[x]:
+        row_values.append(x)
+
+print(row_values)

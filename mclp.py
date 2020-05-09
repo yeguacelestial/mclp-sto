@@ -374,9 +374,14 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
     current_free_sites_indexes = [site[0] for site in current_free_sites]
     print(f"[*] Current free sites indexes (for dist matrix): {current_free_sites_indexes}")
 
-    # Initialize new variables
-    new_objF_nodes = []
-    new_objF_value = 0
+    # Get covered nodes by current objective function
+    covered_nodes = []
+    for site in current_objF_nodes_indexes:
+        # Stores each node that is covered by site
+        covered_node_index = np.where(dist_matrix_boolean[:, site] == True)[0]
+        for node in covered_node_index:
+            covered_nodes.append(node)
+    print(covered_nodes)
 
     # START TIMER
     time_start = time.clock()
@@ -384,23 +389,43 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
     # Algorithm
     # Compute Objective Function of a given site, conidering the boolean distance matrix
     def compute_site_OF(site):
-        boolean_indexes = np.where(dist_matrix_boolean[:, site] == True)    
+        boolean_indexes = np.where(dist_matrix_boolean[:, site] == True)
         for index in boolean_indexes:
             site_objective_functions = dist_matrix[index, site].tolist()
-        
+
         site_OF_sum = sum(site_objective_functions)
         return site_objective_functions, site_OF_sum
 
     # Site 1 (Example for debugging)
     site1_data = compute_site_OF(1)
     site1_OF_results = site1_data[0]
-    site1_OF_sum = site1_OF_data[1]
+    site1_OF_sum = site1_data[1]
+
+    print(f"[*] CURRENT OBJECTIVE FUNCTION: {objective_function_value}")
 
     # Do it in loop
-    for site in current_objF_nodes_indexes:
+    for i, site in enumerate(current_objF_nodes_indexes):
+        current_site_OF = compute_site_OF(site)[1]
+
         for free_site in current_free_sites_indexes:
-            pass
+            free_site_OF = compute_site_OF(free_site)[1]
+
+            # Just one more condition: if nodes are not covered already by another site...
+            if (free_site_OF > current_site_OF) and (free_site not in current_objF_nodes_indexes):
+                current_objF_nodes_indexes[i] = free_site
+                break
+            else:
+                pass
     
+    # Compute final objective function
+    new_objF_value = 0
+    for site in current_objF_nodes_indexes:
+        site_OF = compute_site_OF(site)[0]
+        new_objF_value += len(site_OF)
+
+    print(f"[*] NEW SOLUTION => {new_objF_value},{current_objF_nodes_indexes}")
+    
+
     # END TIMER
     time_elapsed = time.clock() - time_start
     print(f"[+] LS Execution Time: {time_elapsed}s")
