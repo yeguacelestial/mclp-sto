@@ -61,7 +61,10 @@ with Substitution Algorithm iterate each "free" site and compares the objective 
 to a site inside the given solution. That could work. Remember. Local Search seeks to improve a given solution
 by making small movements on it.  
 """
-# TODO: Code Local Search Algorithm
+
+# TODO: Now that you are able to get covered nodes by a given solution (set of sites), you can iterate between each free
+#       candidate sites and evaluate the different OBJECTIVE FUNCTIONS until all nodes are covered OR until all desired 
+#       facilities have been selected.
 
 import colorama
 import numpy as np
