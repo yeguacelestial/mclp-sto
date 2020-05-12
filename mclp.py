@@ -230,7 +230,8 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
     I_set = population_coordinates.shape[0]
     J_set = candidate_sites_coordinates.shape[0]
 
-    print(f'[*] Size of the instance (Population): {I_set}')
+    print(f'\n[*] Size of the instance (Population): {I_set}')
+    print(f'\n[*] Radius: {radius}')
     print(f'[*] Number of free sites: {J_set}')
     print(f'[*] Number of sites to be selected: {S}')
 
@@ -281,10 +282,6 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
             objective_function_value = 0
             print("[-] Couldn't maximize this instance.")
 
-        # OUTPUT
-        print(f"[+] Objective Function - Population covered: {objective_function_value}")
-        print(f"[+] CH Execution time: {time_elapsed}s\n")
-
         # Get solution data
         solution = []
         if m.status == GRB.Status.OPTIMAL:
@@ -298,6 +295,11 @@ def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, inst
         for node in solution:
             node += 1
             solution_excel.append(node)
+        
+        # OUTPUT
+        print(f"\n[+] Objective Function - Population covered: {objective_function_value}")
+        print(f"[+] Objective Function - Selected sites: {solution_excel}")
+        print(f"[+] CH Execution time: {time_elapsed}s\n")
 
         # Filter free candidate sites
         free_candidate_sites = []
@@ -327,19 +329,14 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
                 * objective_function_coordinates ==> Objective function nodes
             * free_candidate_sites ==> FREE Candidate sites
             * dist_matrix ==> Distance matrix
+
         OUTPUT:
             * LOCAL SEARCH Solution
                 -> Objective function
                 -> Objective function nodes
             * Computation time
-    """
-    print("\n[*] *** LOCAL SEARCH HEURISTIC ***")
-    print(f"[*] Current objective function = {objective_function_value}")
-    print(f"[*] Current objective function coordinates = {objective_function_coordinates}")
-    print(f"[*] Current free candidate sites = {free_candidate_sites}")
-
-    """
-    ALGORITHM:
+        
+        ALGORITHM:
             * current_objF_value => CH Solution (Objective function)
             * current_objF_nodes => CH Solution (Objective function nodes ([Site1, Site2, Site3...]))
             * current_free_sites => FREE Candidate sites ([Site4, Site5, Site6...])
@@ -359,15 +356,17 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
                             Revert previous node replaced in current_objF_nodes
                             Keep iterating until a better solution is found
     """
-
+    print("\n[*] *** LOCAL SEARCH HEURISTIC ***")
+    print(f"[*] Current objective function = {objective_function_value}")
+   
     # Create input copies
     current_objF_value = int(objective_function_value)
     current_objF_nodes = objective_function_coordinates.copy()
     current_free_sites = free_candidate_sites.copy()
 
     # Create list of indexes for distance matrix
-    current_objF_nodes_indexes = [node[0]-1 for node in current_objF_nodes]
-    print(f"[*] Current objective function indexes (for dist matrix): {current_objF_nodes_indexes}")
+    current_objF_sites_indexes = [node[0]-1 for node in current_objF_nodes]
+    print(f"[*] Current objective function indexes (for dist matrix): {current_objF_sites_indexes}")
 
     # Create list of indexes of FREE candidate sites for distance matrix
     current_free_sites_indexes = [site[0] for site in current_free_sites]
@@ -392,19 +391,38 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
 
         return covered_nodes, len(covered_nodes)
 
-    print(f"\n[*] CURRENT OBJECTIVE FUNCTION - VALUE => {objective_function_value}")
-    print(f"[*] CURRENT OBJECTIVE FUNCTION - NODES COVERED => {compute_covered_nodes(current_objF_nodes_indexes)[0]}")
+    #print(f"[*] CURRENT OBJECTIVE FUNCTION - NODES COVERED => {compute_covered_nodes(current_objF_sites_indexes)[0]}")
 
     # Evaluate in loop for current sites and free candidate sites
+    current_sites = current_objF_sites_indexes.copy()
+
+    for i, site in enumerate(current_objF_sites_indexes):
+        for free_site in current_free_sites_indexes:
+            current_sites[i] = free_site
+
+            # Compute OF value
+            new_objF_data = compute_covered_nodes(current_sites)
+            new_objF_covered_nodes = new_objF_data[0]
+            new_objF_value = new_objF_data[1]
+
+            # If a better solution is found...
+            if new_objF_value > objective_function_value:
+                current_objF_sites_indexes[i] = free_site
+                x = compute_covered_nodes(current_objF_sites_indexes)
+                print(f"NEW SOLUTION => {x[1]}")
+                exit()
+                break
+            else:   
+                pass
 
     # Get covered nodes by current objective function
-    covered_population_data = compute_covered_nodes(current_objF_nodes_indexes)
+    covered_population_data = compute_covered_nodes(current_objF_sites_indexes)
     covered_population_nodes = covered_population_data[0]
     covered_population_objF = covered_population_data[1]
 
     # New Solution output
-    print(f"[*] NEW SOLUTION - COVERED POPULATION => {covered_population_nodes}")
-    print(f"[*] NEW OBJECTIVE FUNCTION => {covered_population_objF}")
+    #print(f"[*] NEW SOLUTION - COVERED POPULATION => {covered_population_nodes}")
+    #print(f"[*] NEW OBJECTIVE FUNCTION => {covered_population_objF}")
     
     # END TIMER
     time_elapsed = time.clock() - time_start
