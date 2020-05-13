@@ -62,8 +62,7 @@ to a site inside the given solution. That could work. Remember. Local Search see
 by making small movements on it.  
 """
 
-# TODO: Now that you are able to get covered nodes by a given solution (set of sites), you can iterate between each free
-#       candidate sites and evaluate the different OBJECTIVE FUNCTIONS until you found a better one than the current.
+# TODO: Refactor Constructive Heuristic
 
 import colorama
 import numpy as np
@@ -335,26 +334,7 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
                 -> Objective function
                 -> Objective function nodes
             * Computation time
-        
-        ALGORITHM:
-            * current_objF_value => CH Solution (Objective function)
-            * current_objF_nodes => CH Solution (Objective function nodes ([Site1, Site2, Site3...]))
-            * current_free_sites => FREE Candidate sites ([Site4, Site5, Site6...])
-    
-            * for node in current_objF_nodes:
-                for site in current_free_sites:
-                    if node is under radius of site:
-                        Replace node with site -> new_objF_nodes
-                        Compute objective function of current_objF_nodes -> new_objF_value
-
-                        if new_objF > current_objF_value:
-                            Update current_objF_value -> new_objF_value
-                            Update current_objF_nodes -> new_objF_nodes
-                            return new_objF_value, new_objF_nodes
-                            Stop iterating
-                        else:
-                            Revert previous node replaced in current_objF_nodes
-                            Keep iterating until a better solution is found
+            
     """
     print("\n[*] *** LOCAL SEARCH HEURISTIC ***")
     print(f"[*] Current objective function = {objective_function_value}")
@@ -366,11 +346,18 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
 
     # Create list of indexes for distance matrix
     current_objF_sites_indexes = [node[0]-1 for node in current_objF_nodes]
-    print(f"[*] Current objective function indexes (for dist matrix): {current_objF_sites_indexes}")
+    #print(f"[*] Current objective function indexes (for dist matrix): {current_objF_sites_indexes}")
+
+    # DEBUGGING
+    current_objF_sites_indexes_excel = [node[0] for node in current_objF_nodes]
+    current_free_sites_indexes_excel = [site[0]+1 for site in current_free_sites]
+    print(f"[*] Selected sites: {current_objF_sites_indexes_excel}")
+    print(f"[*] Free sites: {current_free_sites_indexes_excel}")
+    # END DEBUGGING
 
     # Create list of indexes of FREE candidate sites for distance matrix
     current_free_sites_indexes = [site[0] for site in current_free_sites]
-    print(f"[*] Current free sites indexes (for dist matrix): {current_free_sites_indexes}")
+    #print(f"[*] Current free sites indexes (for dist matrix): {current_free_sites_indexes}")
 
     # START TIMER
     time_start = time.clock()
@@ -391,42 +378,62 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
 
         return covered_nodes, len(covered_nodes)
 
-    #print(f"[*] CURRENT OBJECTIVE FUNCTION - NODES COVERED => {compute_covered_nodes(current_objF_sites_indexes)[0]}")
-
-    # Evaluate in loop for current sites and free candidate sites
-    current_sites = current_objF_sites_indexes.copy()
-
-    for i, site in enumerate(current_objF_sites_indexes):
-        for free_site in current_free_sites_indexes:
-            current_sites[i] = free_site
-
-            # Compute OF value
-            new_objF_data = compute_covered_nodes(current_sites)
-            new_objF_covered_nodes = new_objF_data[0]
-            new_objF_value = new_objF_data[1]
-
-            # If a better solution is found...
-            if new_objF_value > objective_function_value:
-                current_objF_sites_indexes[i] = free_site
-                x = compute_covered_nodes(current_objF_sites_indexes)
-                print(f"NEW SOLUTION => {x[1]}")
-                exit()
-                break
-            else:   
-                pass
-
-    # Get covered nodes by current objective function
     covered_population_data = compute_covered_nodes(current_objF_sites_indexes)
     covered_population_nodes = covered_population_data[0]
     covered_population_objF = covered_population_data[1]
 
-    # New Solution output
-    #print(f"[*] NEW SOLUTION - COVERED POPULATION => {covered_population_nodes}")
-    #print(f"[*] NEW OBJECTIVE FUNCTION => {covered_population_objF}")
+    # 
+    print(f"\n[*] CURRENT COVERED POPULATION => {covered_population_nodes}")
+    #print(f"[*] SITES INITIAL SET => {current_objF_sites_indexes}")
+
+    current_sites_data = []
+    for site in current_objF_sites_indexes:
+        covered_population_by_site_data = compute_covered_nodes([site])
+        nodes_covered = covered_population_by_site_data[0]
+        objective = covered_population_by_site_data[1]
+
+        current_sites_data.append((site, objective, nodes_covered))
+        print(f"POPULATION COVERED BY SITE {site+1} => {objective}")
+        print(f"NODES COVERED => {nodes_covered}\n")
     
+    free_sites_data = []
+    print(f"\n[*] FREE SITES INITIAL SET => {current_free_sites_indexes}")
+    for site in current_free_sites_indexes:
+        covered_population_by_site_data = compute_covered_nodes([site])
+        nodes_covered = covered_population_by_site_data[0]
+        objective = covered_population_by_site_data[1]
+
+        free_sites_data.append((site, objective, nodes_covered))
+        print(f"POPULATION COVERED BY FREE SITE {site} => {objective}")
+
+    #print(f"[*] CURRENT SITES: {current_sites_data}")
+    for i, site in enumerate(current_sites_data):
+        current_site = site[0]
+        current_site_objF = site[1]
+        current_site_population = site[2]
+        
+        for free_i, fr_site in enumerate(free_sites_data):
+            free_site = fr_site[0]
+            free_site_objF = fr_site[1]
+            free_site_population = fr_site[2]
+            #print(f"MOVE({current_site},{free_site})")
+            
+            if free_site_objF > current_site_objF:
+                current_sites_data[i] = free_site
+                free_sites_data.pop(free_i)
+
+    #print(f"[*] NEW SITES: {current_sites_data}")
+    print(f"\nPOPULATION COVERED BY SITE 0 => {compute_covered_nodes([0])[0]}")
+    print(f"\nPOPULATION COVERED BY SITE 2 => {compute_covered_nodes([2])[0]}")
+    print(f"\nPOPULATION COVERED BY SITE 5 => {compute_covered_nodes([5])[0]}")
+    print(f"\nPOPULATION COVERED BY SITE 7 => {compute_covered_nodes([7])[0]}")
+    print(f"\nPOPULATION COVERED BY SITE 13 => {compute_covered_nodes([13])[0]}")
+
+    print(f"\nPOPULATION COVERED BY FREE SITE 17 => {compute_covered_nodes([17])[0]}")
+
     # END TIMER
     time_elapsed = time.clock() - time_start
-    print(f"[+] LS Execution Time: {time_elapsed}s")
+    print(f"\n[+] LS Execution Time: {time_elapsed}s")
 
 
 def delete_last_line():
