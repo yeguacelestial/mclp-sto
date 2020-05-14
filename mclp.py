@@ -255,7 +255,6 @@ def mclp_ch_refactor(population_points, candidate_sites_points, number_sites_to_
 
     # 1. Start with an empty solution
     solution = []
-    current_covered_nodes = []
 
     # 2. Compute distance matrix
     from scipy.spatial.distance import cdist
@@ -268,21 +267,27 @@ def mclp_ch_refactor(population_points, candidate_sites_points, number_sites_to_
     boolean_matrix[~constraint1] = 0 # Stores boolean 'False' if demand point 'i' is NOT under radius of site 'j'
     
     # 4. Compute INDIVIDUAL covered nodes by each site in boolean matrix
+    current_covered_nodes = []
     sites_with_covered_nodes = {}
 
+    # for site in boolean_matrix...
     for i, site in candidate_sites_points_with_index:
-        site_covered_nodes = np.where(boolean_matrix[:,i] == True)[0]
-        total_covered_nodes = len(site_covered_nodes)
-        print(f"Covered nodes by site {i} => {site_covered_nodes}")
-        print(f"Total covered => {total_covered_nodes}")
+        site_all_covered_nodes = np.where(boolean_matrix[:,i] == True)[0]
+        site_individual_covered_nodes = []
 
-    # Stores each node that is covered by site 0 (1 in the Excel instance)
-    covered_node_index = np.where(boolean_matrix[:, 0] == True)[0]
-    #print(covered_node_index)
+        # for node in site:
+        for node in site_all_covered_nodes:
+            if node not in current_covered_nodes:
+                site_individual_covered_nodes.append(node)
+                current_covered_nodes.append(node)
+            else:
+                pass
 
-    # Get all sites from site 0 (1 in the Excel instance)
-    #print(boolean_matrix[:,0])
-
+        sites_with_covered_nodes[i] = site_individual_covered_nodes
+    
+    for site in sites_with_covered_nodes:
+        print(f"SITE {site} => {sites_with_covered_nodes[site]} nodes")
+    
     """
         OUTPUT
     """
