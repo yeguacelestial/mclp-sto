@@ -259,7 +259,7 @@ def mclp_ch(population_points, candidate_sites_points, number_sites_to_select, r
         ALGORITHM
     """
     # 1. Start with an empty solution
-    solution = []
+    selected_sites = []
 
     # 2. Compute distance matrix
     from scipy.spatial.distance import cdist
@@ -291,13 +291,14 @@ def mclp_ch(population_points, candidate_sites_points, number_sites_to_select, r
         sites_with_covered_nodes[i] = site_individual_covered_nodes
     
     for site in sites_with_covered_nodes:
-        print(f"SITE {site} => {len(sites_with_covered_nodes[site])}")
+        print(f"SITE {site} => {len(sites_with_covered_nodes[site])} nodes covered")
     
     # 5. Pick the site that covers most of the total population
     # Create dictionary with the sum of covered nodes
     sites_with_objective_function = {}
     for site in sites_with_covered_nodes:
         sites_with_objective_function[site] = len(sites_with_covered_nodes[site])
+    sites_with_objective_function_copy = sites_with_objective_function.copy()
 
     """
     7. Repeat step 5, stop until
@@ -306,31 +307,39 @@ def mclp_ch(population_points, candidate_sites_points, number_sites_to_select, r
     (len(current_covered_nodes) == len(population_points))
     """
     print(f"[*] COVERED NODES BY ALL CANDIDATE SITES => {len(current_covered_nodes)}")
+
     loop_boolean_value = True
     while loop_boolean_value == True:
-        # ...Start of Step 5...
+        # 5. Pick the site that covers most of the total population
         # Site whose objective function is the largest
         site_with_max_population = max(sites_with_objective_function, key = lambda k: sites_with_objective_function[k])
-        print(f"SITE WITH MAX POPULATION => SITE {site_with_max_population}")
 
         # 6. Add_site_with_max_population to solution, and remove it from sites_with_objective_function
-        solution.append(site_with_max_population)
+        selected_sites.append(site_with_max_population)
         sites_with_objective_function.pop(site_with_max_population)
-        print(f"NEW DICT => {sites_with_objective_function}")
-        # ...End of step 5...
+
         # Constraint
-        if (len(solution) == number_sites_to_select) or (len(current_covered_nodes) == len(population_points)):
+        if (len(selected_sites) == number_sites_to_select) or (len(current_covered_nodes) == len(population_points)):
             loop_boolean_value = False
-        
+
+    # Compute objective function (covered population)
+    objective_function = 0
+    for site in selected_sites:
+        objective_function += sites_with_objective_function_copy[site]
+
     """
         OUTPUT
     """
     print("\n[+++] OUTPUT [+++]")
 
-    # Solution - Selected sites
-    print(f"[+] SOLUTION - SELECTED SITES => {solution}")
-    # TODO: Print Population covered by selected sites
-    return
+    # Solution - Selected sites (Display Excel instances nodes)
+    selected_sites_excel_instance = [site+1 for site in selected_sites]
+    print(f"[+] SOLUTION - SELECTED SITES => {selected_sites_excel_instance}")
+
+    # Solution - Covered population
+    print(f"[+] SOLUTION - OBJECTIVE FUNCTION (COVERED POPULATION) => {objective_function}")
+
+    return 
 
 
 def mclp_ls(objective_function_value, objective_function_coordinates, dist_matrix, free_candidate_sites, dist_matrix_boolean):
