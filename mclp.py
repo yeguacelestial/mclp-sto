@@ -184,7 +184,7 @@ def mclp(number_of_sites, radius, instance_file):
     candidate_sites_coordinates = data[1]
 
     print(f"\n[*] Computing instance {instance_file}...")
-    ch_data = mclp_ch_refactor(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
+    ch_data = mclp_ch(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
     
     # End CH timer
     ch_time_elapsed = time.clock() - ch_time_start
@@ -223,7 +223,7 @@ def read_data(file):
     return population_coordinates, candidate_sites_coordinates
 
 
-def mclp_ch_refactor(population_points, candidate_sites_points, number_sites_to_select, radius, instance_name):
+def mclp_ch(population_points, candidate_sites_points, number_sites_to_select, radius, instance_name):
     print("\n[***] CONSTRUCTIVE HEURISTIC [***]")
     """
         INPUT
