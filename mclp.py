@@ -17,6 +17,7 @@ Constructive Heuristic:
     ALGORITHM:
         1. Start with an empty solution
             solution <== []
+            current_covered_nodes = []
 
         2. Compute distance matrix
             dist_matrix <== [Site 'j':[Distance from node 'i' in population_points to site 'j' in candidate_sites_points],...]
@@ -25,9 +26,7 @@ Constructive Heuristic:
             boolean_matrix <== [Site 'j':['i' nodes covered by site 'j'],...]
         
         4. Compute INDIVIDUAL covered nodes by each site in boolean matrix
-
-            sites_with_covered_nodes = []
-            current_covered_nodes = []
+            sites_with_covered_nodes = {}
 
             for site in boolean_matrix:
                 site_covered_nodes = []
@@ -38,12 +37,21 @@ Constructive Heuristic:
                         current_covered_nodes.append(node)
                     else:
                         pass
-                sites_with_covered_nodes.append((site, site_covered_nodes))
+
+                sites_with_covered_nodes[site] = site_covered_nodes
 
         5. Pick the site that covers most of the total population
-            site_with_max_population <== max(site j)
-
-    PSEUDOCODE:
+            # Site whose objective function is the largest
+            site_with_max_population = max(sites_with_covered_nodes, key = lambda k: sites_with_covered_nodes[k])
+        
+        6. Add site_with_max_population to solution, and remove it from sites_with_covered_nodes
+            solution <== append(site_with_max_population)
+            sites_with_covered_nodes <== remove(site_with_max_population)
+        
+        7. Repeat step 5, stop until 
+            len(solution) === number_sites_to_select
+                        or
+            len(compute_covered_nodes(solution)[covered nodes]) === len(population_points)
 
 *********************************************
 Local Search Heuristic
