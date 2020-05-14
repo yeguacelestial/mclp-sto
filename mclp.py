@@ -175,6 +175,9 @@ def getInput():
 
 
 def mclp(number_of_sites, radius, instance_file):
+    # Start CH timer
+    ch_time_start = time.clock()
+
     # Solve MCLP by CH (Constructive Heuristic)
     data = read_data(instance_file)
     population_coordinates = data[0]
@@ -182,6 +185,10 @@ def mclp(number_of_sites, radius, instance_file):
 
     print(f"\n[*] Computing instance {instance_file}...")
     ch_data = mclp_ch_refactor(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
+    
+    # End CH timer
+    ch_time_elapsed = time.clock() - ch_time_start
+    print(f"[+] Constructive Heuristic execution time: {ch_time_elapsed}s")
 
     # objective_function_value = ch_data[0]
     # objective_function_coordinates = ch_data[1]
@@ -217,13 +224,15 @@ def read_data(file):
 
 
 def mclp_ch_refactor(population_points, candidate_sites_points, number_sites_to_select, radius, instance_name):
-    print("[***] CONSTRUCTIVE HEURISTIC [***]")
+    print("\n[***] CONSTRUCTIVE HEURISTIC [***]")
     """
         INPUT
     """
+    print("\n[+++] INPUT [+++]")
+
     # Assocciate index to each population coordinate
-    print(f"[*] POPULATION POINTS:{len(population_points)}")
-    print(f"[*] CANDIDATE SITES COORDINATES:{len(candidate_sites_points)}")
+    print(f"[*] POPULATION POINTS => {len(population_points)}")
+    print(f"[*] CANDIDATE SITES => {len(candidate_sites_points)}")
     print(f"[*] NUMBER OF SITES TO SELECT => {number_sites_to_select}")
     print(f"[*] RADIUS => {radius}")
     print(f"[*] INSTANCE NAME => {instance_name}")
@@ -245,14 +254,10 @@ def mclp_ch_refactor(population_points, candidate_sites_points, number_sites_to_
     # Size of I and J
     I_size = population_points.shape[0]
     J_size = candidate_sites_points.shape[0]
-
     
     """
         ALGORITHM
     """
-    # Start timer
-    time_start = time.clock()
-
     # 1. Start with an empty solution
     solution = []
 
@@ -286,7 +291,7 @@ def mclp_ch_refactor(population_points, candidate_sites_points, number_sites_to_
         sites_with_covered_nodes[i] = site_individual_covered_nodes
     
     for site in sites_with_covered_nodes:
-        print(f"SITE {site} => {len(sites_with_covered_nodes[site])} nodes === {sites_with_covered_nodes[site]}")
+        print(f"SITE {site} => {len(sites_with_covered_nodes[site])}")
     
     # 5. Pick the site that covers most of the total population
     # Create dictionary with the sum of covered nodes
@@ -294,22 +299,29 @@ def mclp_ch_refactor(population_points, candidate_sites_points, number_sites_to_
     for site in sites_with_covered_nodes:
         sites_with_objective_function[site] = len(sites_with_covered_nodes[site])
 
-    # Site whose objective function is the largest
-    site_with_max_population = max(sites_with_objective_function, key = lambda k: sites_with_objective_function[k])
-    print(f"SITE WITH MAX POPULATION => SITE {site_with_max_population}")
-
-    # 6. Add_site_with_max_population to solution, and remove it from sites_with_objective_function
-    solution.append(site_with_max_population)
-    sites_with_objective_function.pop(site_with_max_population)
-    print(f"NEW DICT => {sites_with_objective_function}")
-
     """
     7. Repeat step 5, stop until
     (len(solution) == number_sites_to_select)
                    or
     (len(current_covered_nodes) == len(population_points))
     """
+    print(f"[*] COVERED NODES BY ALL CANDIDATE SITES => {len(current_covered_nodes)}")
+    loop_boolean_value = True
+    while loop_boolean_value == True:
+        # ...Start of Step 5...
+        # Site whose objective function is the largest
+        site_with_max_population = max(sites_with_objective_function, key = lambda k: sites_with_objective_function[k])
+        print(f"SITE WITH MAX POPULATION => SITE {site_with_max_population}")
 
+        # 6. Add_site_with_max_population to solution, and remove it from sites_with_objective_function
+        solution.append(site_with_max_population)
+        sites_with_objective_function.pop(site_with_max_population)
+        print(f"NEW DICT => {sites_with_objective_function}")
+        # ...End of step 5...
+        # Constraint
+        if (len(solution) == number_sites_to_select) or (len(current_covered_nodes) == len(population_points)):
+            loop_boolean_value = False
+        
     """
         OUTPUT
     """
@@ -317,136 +329,8 @@ def mclp_ch_refactor(population_points, candidate_sites_points, number_sites_to_
 
     # Solution - Selected sites
     print(f"[+] SOLUTION - SELECTED SITES => {solution}")
-
-    # End timer
-    time_elapsed = time.clock() - time_start
-    print(f"Execution time: {time_elapsed}s")
+    # TODO: Print Population covered by selected sites
     return
-
-
-def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, instance_name):
-    """
-    SOLVE MCLP (CONSTRUCTIVE HEURISTIC)
-    *Input:
-        population_coordinates => Coordinates of population nodes
-        candidate_sites_coordinates => Coordinates of free candidate sites
-        S => Number of sites to be selected
-        radius => Service radius of each site
-        instance_name => Instance filename
-
-    *Return:
-        opt_sites => Locations of K optimal sites, numpy array
-        objective => Value of objective function
-    """
-
-    # Start timer
-    time_start = time.clock()
-
-    # START OF CONSTRUCTIVE HEURISTIC
-    print("[*] *** CONSTRUCTIVE HEURISTIC ***")
-    # Build Model
-    m = Model()
-
-    # Delete lines generated by Gurobipy
-    # for line in range(2):
-    #     delete_last_line()
-
-    # Cast population and candidates sites arrays to numpy arrays
-    population_coordinates = array(population_coordinates)
-    candidate_sites_coordinates = array(candidate_sites_coordinates)
-
-    # Create I and J sets
-    I_set = population_coordinates.shape[0]
-    J_set = candidate_sites_coordinates.shape[0]
-
-    print(f'\n[*] Size of the instance (Population): {I_set}')
-    print(f'\n[*] Radius: {radius}')
-    print(f'[*] Number of free sites: {J_set}')
-    print(f'[*] Number of sites to be selected: {S}')
-
-    # Create distance matrix
-    from scipy.spatial.distance import cdist
-    dist_matrix = cdist(population_coordinates, candidate_sites_coordinates, 'euclidean').astype(int)
-    dist_matrix_copy = dist_matrix.copy() # Create a copy of distance matrix values
-
-    # Generate boolean matrix for each candidate under radius
-    mask1 = dist_matrix <= radius
-    dist_matrix[mask1] = 1  # Stores '1' if dist_matrix value is less than radius
-    dist_matrix[~mask1] = 0 # Stores '0' if dist_matrix value is greater than radius
-    dist_matrix_boolean = dist_matrix.copy()
-
-    # Add variables
-    x = {}
-    y = {}
-
-    for i in range(I_set):
-        y[i] = m.addVar(vtype=GRB.BINARY, name=f"y{i}")
-    
-    for j in range(J_set):
-        x[j] = m.addVar(vtype=GRB.BINARY, name=f"x{j}")
-    
-    # Update model
-    m.update()
-
-    # Add constraints to the model
-    m.addConstr(quicksum(x[j] for j in range(J_set)) == S)
-
-    for i in range(I_set):
-        m.addConstr(quicksum(x[j] for j in np.where(dist_matrix[i]==1)[0]) >= y[i])
-    
-    # Set objective function on the model
-    m.setObjective(quicksum(y[i] for i in range(I_set)), GRB.MAXIMIZE)
-
-    m.setParam('OutputFlag', 0)
-    m.optimize()
-    # END OF COMPUTATION OF CONSTRUCTIVE HEURISTIC
-
-    try:
-        # End timer
-        time_elapsed = time.clock() - time_start
-
-        objective_function_value = int(m.objVal)
-        # If objective function is less or equal than 0:
-        if objective_function_value <= 0: 
-            objective_function_value = 0
-            print("[-] Couldn't maximize this instance.")
-
-        # Get solution data
-        solution = []
-        if m.status == GRB.Status.OPTIMAL:
-            for v in m.getVars():
-                if v.x==1 and v.varName[0]=="x":
-                    solution.append(int(v.varName[1:]))
-        opt_sites = candidate_sites_coordinates[solution]
-
-        # Fixed solution with nodes for Excel files (starting from index 1 instead of 0)
-        solution_excel = []
-        for node in solution:
-            node += 1
-            solution_excel.append(node)
-        
-        # OUTPUT
-        print(f"\n[+] Objective Function - Population covered: {objective_function_value}")
-        print(f"[+] Objective Function - Selected sites: {solution_excel}")
-        print(f"[+] CH Execution time: {time_elapsed}s\n")
-
-        # Filter free candidate sites
-        free_candidate_sites = []
-        candidate_sites_coordinates = candidate_sites_coordinates.tolist()
-        for site in candidate_sites_coordinates:
-            if site not in opt_sites:
-                site_index = candidate_sites_coordinates.index(site)
-                free_candidate_sites.append((site_index, site))
-
-        # Associate fixed node with each coordinate
-        objective_function_coordinates = list(zip(solution_excel, opt_sites))
-
-        return objective_function_value, objective_function_coordinates, dist_matrix_copy, free_candidate_sites, dist_matrix_boolean
-
-    except AttributeError:
-        raise
-        print("[-] Error: Problem is unfeasible.")
-        exit()
 
 
 def mclp_ls(objective_function_value, objective_function_coordinates, dist_matrix, free_candidate_sites, dist_matrix_boolean):
@@ -564,17 +448,6 @@ def mclp_ls(objective_function_value, objective_function_coordinates, dist_matri
     # END TIMER
     time_elapsed = time.clock() - time_start
     print(f"\n[+] LS Execution Time: {time_elapsed}s")
-
-
-def delete_last_line():
-    import sys
-    "Delete last line in STDOUT"
-
-    # CURSOR UP ONE LINE
-    sys.stdout.write('\x1b[1A')
-
-    # DELETE LAST LINE
-    sys.stdout.write('\x1b[2K')
 
 
 if __name__ == '__main__':
