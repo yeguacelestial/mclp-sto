@@ -81,7 +81,10 @@ NOTE: Euclidean distance => AC = sqrt(AB² + BC²) = sqrt( (x2 - x1)² + (y2 - y
 NOTE: About Local Search approach: Okay. You already have the candidate sites of an specific instance. The Greddy Adding
 with Substitution Algorithm iterate each "free" site and compares the objective function (population covered by that site)
 to a site inside the given solution. That could work. Remember. Local Search seeks to improve a given solution
-by making small movements on it.  
+by making small movements on it. 
+*********************************************
+NOTE: About Local Search: why replace one site when you can replace two. Sum two of them, and compare them between another
+two free sites. Try something like that.
 """
 
 # TODO: Refactor Constructive Heuristic
@@ -291,7 +294,7 @@ def mclp_ch(population_points, candidate_sites_points, number_sites_to_select, r
         sites_with_covered_nodes[i] = site_individual_covered_nodes
     
     for site in sites_with_covered_nodes:
-        print(f"SITE {site} => {len(sites_with_covered_nodes[site])} nodes covered")
+        print(f"SITE {site+1} => {len(sites_with_covered_nodes[site])} nodes covered")
     
     # 5. Pick the site that covers most of the total population
     # Create dictionary with the sum of covered nodes
