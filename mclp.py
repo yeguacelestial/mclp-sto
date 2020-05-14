@@ -246,22 +246,32 @@ def mclp_ch_refactor(population_points, candidate_sites_points, number_sites_to_
     I_size = population_points.shape[0]
     J_size = candidate_sites_points.shape[0]
 
-    # Create euclidean distance matrix
-    from scipy.spatial.distance import cdist
-    dist_matrix = cdist(population_points, candidate_sites_points, 'euclidean').astype(int)
     
-    # Create boolean distance matrix
-    dist_matrix_boolean = dist_matrix.copy()
-    constraint1 = dist_matrix <= radius # Validates if demand point 'i' is under radius of site 'j'
-    dist_matrix_boolean[constraint1] = 1 # Stores boolean 'True' if demand point 'i' is under radius of site 'j'
-    dist_matrix_boolean[~constraint1] = 0 # Stores boolean 'False' if demand point 'i' is NOT under radius of site 'j'
-
     """
         ALGORITHM
     """
     # Start timer
     time_start = time.clock()
 
+    # 1. Start with an empty solution
+    solution = []
+    current_covered_nodes = []
+
+    # 2. Compute distance matrix
+    from scipy.spatial.distance import cdist
+    dist_matrix = cdist(population_points, candidate_sites_points, 'euclidean').astype(int)
+    
+    # 3. Compute boolean matrix
+    boolean_matrix = dist_matrix.copy()
+    constraint1 = dist_matrix <= radius # Validates if demand point 'i' is under radius of site 'j'
+    boolean_matrix[constraint1] = 1 # Stores boolean 'True' if demand point 'i' is under radius of site 'j'
+    boolean_matrix[~constraint1] = 0 # Stores boolean 'False' if demand point 'i' is NOT under radius of site 'j'
+    
+    # 4. Compute INDIVIDUAL covered nodes by each site in boolean matrix
+    sites_with_covered_nodes = []
+
+    # Get all sites from site 0 (1 in the Excel instance)
+    print(boolean_matrix[:,0])
     """
         OUTPUT
     """
