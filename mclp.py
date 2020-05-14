@@ -7,7 +7,44 @@ PROGRAM INPUT:
 * Desired population to cover >> M
 *********************************************
 Constructive Heuristic:
+    INPUT:
+        * population_points
+        * candidate_sites_points
+        * number_sites_to_select
+        * radius
+        * instance_name
+
+    ALGORITHM:
+        1. Start with an empty solution
+            solution <== []
+
+        2. Compute distance matrix
+            dist_matrix <== [Site 'j':[Distance from node 'i' in population_points to site 'j' in candidate_sites_points],...]
         
+        3. Compute boolean matrix
+            boolean_matrix <== [Site 'j':['i' nodes covered by site 'j'],...]
+        
+        4. Compute INDIVIDUAL covered nodes by each site in boolean matrix
+
+            sites_with_covered_nodes = []
+            current_covered_nodes = []
+
+            for site in boolean_matrix:
+                site_covered_nodes = []
+
+                for node in site:
+                    if node not in current_covered_nodes:
+                        site_covered_nodes.append(node)
+                        current_covered_nodes.append(node)
+                    else:
+                        pass
+                sites_with_covered_nodes.append((site, site_covered_nodes))
+
+        5. Pick the site that covers most of the total population
+            site_with_max_population <== max(site j)
+
+    PSEUDOCODE:
+
 *********************************************
 Local Search Heuristic
         INPUT:
@@ -170,6 +207,7 @@ def read_data(file):
 
     return population_coordinates, candidate_sites_coordinates
 
+
 def mclp_ch_refactor(population_points, candidate_sites_points, number_sites_to_select, radius, instance_name):
     print("[***] CONSTRUCTIVE HEURISTIC [***]")
     """
@@ -210,7 +248,6 @@ def mclp_ch_refactor(population_points, candidate_sites_points, number_sites_to_
     dist_matrix_boolean[constraint1] = 1 # Stores boolean 'True' if demand point 'i' is under radius of site 'j'
     dist_matrix_boolean[~constraint1] = 0 # Stores boolean 'False' if demand point 'i' is NOT under radius of site 'j'
 
-    print(dist_matrix_boolean)
     """
         ALGORITHM
     """
@@ -224,6 +261,7 @@ def mclp_ch_refactor(population_points, candidate_sites_points, number_sites_to_
     # End timer
     time_elapsed = time.clock() - time_start
     return
+
 
 def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, instance_name):
     """
