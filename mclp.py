@@ -222,8 +222,8 @@ def mclp_ch_refactor(population_points, candidate_sites_points, number_sites_to_
         INPUT
     """
     # Assocciate index to each population coordinate
-    print(f"[*] POPULATION POINTS:\n{population_points}")
-    print(f"[*] CANDIDATE SITES COORDINATES:\n{candidate_sites_points}")
+    print(f"[*] POPULATION POINTS:{len(population_points)}")
+    print(f"[*] CANDIDATE SITES COORDINATES:{len(candidate_sites_points)}")
     print(f"[*] NUMBER OF SITES TO SELECT => {number_sites_to_select}")
     print(f"[*] RADIUS => {radius}")
     print(f"[*] INSTANCE NAME => {instance_name}")
@@ -286,7 +286,7 @@ def mclp_ch_refactor(population_points, candidate_sites_points, number_sites_to_
         sites_with_covered_nodes[i] = site_individual_covered_nodes
     
     for site in sites_with_covered_nodes:
-        print(f"SITE {site} => {sites_with_covered_nodes[site]} nodes")
+        print(f"SITE {site} => {len(sites_with_covered_nodes[site])} nodes === {sites_with_covered_nodes[site]}")
     
     # 5. Pick the site that covers most of the total population
     # Create dictionary with the sum of covered nodes
@@ -302,11 +302,21 @@ def mclp_ch_refactor(population_points, candidate_sites_points, number_sites_to_
     solution.append(site_with_max_population)
     sites_with_objective_function.pop(site_with_max_population)
     print(f"NEW DICT => {sites_with_objective_function}")
-    print(f"SOLUTION => {solution}")
+
+    """
+    7. Repeat step 5, stop until
+    (len(solution) == number_sites_to_select)
+                   or
+    (len(current_covered_nodes) == len(population_points))
+    """
+
     """
         OUTPUT
     """
-    print("[+++] OUTPUT [+++]")
+    print("\n[+++] OUTPUT [+++]")
+
+    # Solution - Selected sites
+    print(f"[+] SOLUTION - SELECTED SITES => {solution}")
 
     # End timer
     time_elapsed = time.clock() - time_start
