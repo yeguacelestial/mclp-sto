@@ -298,12 +298,19 @@ def mclp_ch_refactor(population_points, candidate_sites_points, number_sites_to_
     site_with_max_population = max(sites_with_objective_function, key = lambda k: sites_with_objective_function[k])
     print(f"SITE WITH MAX POPULATION => SITE {site_with_max_population}")
 
+    # 6. Add_site_with_max_population to solution, and remove it from sites_with_objective_function
+    solution.append(site_with_max_population)
+    sites_with_objective_function.pop(site_with_max_population)
+    print(f"NEW DICT => {sites_with_objective_function}")
+    print(f"SOLUTION => {solution}")
     """
         OUTPUT
     """
+    print("[+++] OUTPUT [+++]")
 
     # End timer
     time_elapsed = time.clock() - time_start
+    print(f"Execution time: {time_elapsed}s")
     return
 
 
