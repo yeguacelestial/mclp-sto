@@ -288,6 +288,16 @@ def mclp_ch_refactor(population_points, candidate_sites_points, number_sites_to_
     for site in sites_with_covered_nodes:
         print(f"SITE {site} => {sites_with_covered_nodes[site]} nodes")
     
+    # 5. Pick the site that covers most of the total population
+    # Create dictionary with the sum of covered nodes
+    sites_with_objective_function = {}
+    for site in sites_with_covered_nodes:
+        sites_with_objective_function[site] = len(sites_with_covered_nodes[site])
+
+    # Site whose objective function is the largest
+    site_with_max_population = max(sites_with_objective_function, key = lambda k: sites_with_objective_function[k])
+    print(f"SITE WITH MAX POPULATION => SITE {site_with_max_population}")
+
     """
         OUTPUT
     """
