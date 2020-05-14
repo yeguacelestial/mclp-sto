@@ -7,15 +7,7 @@ PROGRAM INPUT:
 * Desired population to cover >> M
 *********************************************
 Constructive Heuristic:
-        * Create empty solution -> sites = [] 
-        * Generate all candidate sites under specified radius
-        * Evaluate objective function of these sites -> sites_OF = [of-1, of-2,...,of-n]
-        * for site in range(sites):
-              if M covered is greater than 0:
-                  Pick the site with the MAX objective function, and add to solution -> sites.append(max_of(site))
-              else:
-                  end for loop
-        * Return sites
+        
 *********************************************
 Local Search Heuristic
         INPUT:
@@ -30,22 +22,7 @@ Local Search Heuristic
                 -> Objective function nodes
             * Computation time
         ALGORITHM:
-            * current_objF_value => CH Solution (Objective function)
-            * current_objF_nodes => CH Solution (Objective function nodes ([Site1, Site2, Site3...]))
-            * current_free_sites => FREE Candidate sites ([Site4, Site5, Site6...])
-    
-            * for node in current_objF_nodes:
-                for site in current_free_sites:
-                    Replace node with site -> new_objF_nodes
-                    Compute objective function of current_objF_nodes -> new_objF_value
-
-                    if new_objF > current_objF_value:
-                        Update current_objF_value -> new_objF_value
-                        Update current_objF_nodes -> new_objF_nodes
-                        return new_objF_value, new_objF_nodes
-                        Stop iterating
-                    else:
-                        Keep iterating until a better solution is found
+            
 
 *********************************************
 PROGRAM OUTPUT:
@@ -159,16 +136,16 @@ def mclp(number_of_sites, radius, instance_file):
     candidate_sites_coordinates = data[1]
 
     print(f"\n[*] Computing instance {instance_file}...")
-    ch_data = mclp_ch(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
+    ch_data = mclp_ch_refactor(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
 
-    objective_function_value = ch_data[0]
-    objective_function_coordinates = ch_data[1]
-    dist_matrix_copy = ch_data[2] 
-    free_candidate_sites = ch_data[3]
-    dist_matrix_boolean = ch_data[4]
+    # objective_function_value = ch_data[0]
+    # objective_function_coordinates = ch_data[1]
+    # dist_matrix_copy = ch_data[2] 
+    # free_candidate_sites = ch_data[3]
+    # dist_matrix_boolean = ch_data[4]
 
     # Solve MCLP by LS (Local Search Heuristic)
-    mclp_ls(objective_function_value, objective_function_coordinates, dist_matrix_copy, free_candidate_sites, dist_matrix_boolean)
+    #mclp_ls(objective_function_value, objective_function_coordinates, dist_matrix_copy, free_candidate_sites, dist_matrix_boolean)
 
 
 def sorted_ls(path):
@@ -193,6 +170,60 @@ def read_data(file):
 
     return population_coordinates, candidate_sites_coordinates
 
+def mclp_ch_refactor(population_points, candidate_sites_points, number_sites_to_select, radius, instance_name):
+    print("[***] CONSTRUCTIVE HEURISTIC [***]")
+    """
+        INPUT
+    """
+    # Assocciate index to each population coordinate
+    print(f"[*] POPULATION POINTS:\n{population_points}")
+    print(f"[*] CANDIDATE SITES COORDINATES:\n{candidate_sites_points}")
+    print(f"[*] NUMBER OF SITES TO SELECT => {number_sites_to_select}")
+    print(f"[*] RADIUS => {radius}")
+    print(f"[*] INSTANCE NAME => {instance_name}")
+
+    # Associate index to population points, starting from 1
+    population_points_with_index = []
+    for point in population_points:
+        population_points_with_index.append((population_points.index(point)+1, point))
+    
+    # Associate index to candidate sites, starting from 1
+    candidate_sites_points_with_index = []
+    for point in candidate_sites_points:
+        candidate_sites_points_with_index.append((candidate_sites_points.index(point),point))
+
+    # Cast to numpy arrays
+    population_points = array(population_points)
+    candidate_sites_points = array(candidate_sites_points)
+    
+    # Size of I and J
+    I_size = population_points.shape[0]
+    J_size = candidate_sites_points.shape[0]
+
+    # Create euclidean distance matrix
+    from scipy.spatial.distance import cdist
+    dist_matrix = cdist(population_points, candidate_sites_points, 'euclidean').astype(int)
+    
+    # Create boolean distance matrix
+    dist_matrix_boolean = dist_matrix.copy()
+    constraint1 = dist_matrix <= radius # Validates if demand point 'i' is under radius of site 'j'
+    dist_matrix_boolean[constraint1] = 1 # Stores boolean 'True' if demand point 'i' is under radius of site 'j'
+    dist_matrix_boolean[~constraint1] = 0 # Stores boolean 'False' if demand point 'i' is NOT under radius of site 'j'
+
+    print(dist_matrix_boolean)
+    """
+        ALGORITHM
+    """
+    # Start timer
+    time_start = time.clock()
+
+    """
+        OUTPUT
+    """
+
+    # End timer
+    time_elapsed = time.clock() - time_start
+    return
 
 def mclp_ch(population_coordinates, candidate_sites_coordinates, S, radius, instance_name):
     """
