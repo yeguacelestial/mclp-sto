@@ -121,8 +121,8 @@ Local Search Heuristic
             * Computation time
 
         ALGORITHM:
-            objF_copy = int(current_objF_value) <== int
-            objF_sites_copy = current_objF_sites.copy() <== list 
+            objF_copy = int(objF_value) <== int
+            objF_sites_copy = objF_sites.copy() <== list 
             free_sites_copy = free_sites.copy() <== list
             sites_with_objF_copy = sites_with_objF.copy() <== dict
 
@@ -588,11 +588,16 @@ def mclp_ls(objF_value, objF_sites, free_sites, sites_with_objF):
     """
         INPUT
     """
-    current_objF_copy = int()
+    objF_copy = int(objF_value)
+    objF_sites_copy = objF_sites.copy()
+    free_sites_copy = free_sites.copy()
+    sites_with_objF_copy = sites_with_objF.copy()
 
     """
         ALGORITHM
     """
+    
+
     """
         OUTPUT
     """
