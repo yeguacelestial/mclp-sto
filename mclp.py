@@ -72,7 +72,7 @@ Constructive Heuristic
             2. Restrictions for adding a site to selected_sites:
                 r1 <== site has nodes under radius == (1,0)
                 r2 <== len(selected_sites) < number_sites_to_select == (1, 0)
-                r3 <== current_covered_nodes < population_points == (1, 0)
+                r3 <== current_covered_nodes < population_points == (1,0)
 
             3. Iterate candidate sites and compute covered nodes of each one
             
@@ -85,9 +85,26 @@ Constructive Heuristic
             7. Return: objF
         
         PSEUDOCODE:
+            selected_sites = []
+            total_population_points = len(population_points)
+
             For site in candidate_sites:
                 current_covered_nodes <== compute_covered_nodes(selected_sites)
+                number_of_covered_nodes = len(current_covered_nodes)
 
+                r1 = covered_nodes(boolean_matrix(site)) > 0
+                r2 = len(selected_sites) < number_sites_to_select
+                r3 = number_of_covered_nodes < total_population_points
+
+                if r1 and r2 and r3 == True:
+                    selected_sites.append(site)
+
+                elif r1 == False:
+                    pass
+
+                else:
+                    break
+                
 *********************************************
 Local Search Heuristic
         INPUT:
@@ -386,6 +403,10 @@ def mclp_ga(population_points, candidate_sites_points, number_sites_to_select, r
     print(f"[+] SOLUTION - OBJECTIVE FUNCTION (COVERED POPULATION) => {objective_function}")
 
     return 
+
+
+def mclp_ch(population_points, candidate_sites_points, number_sites_to_select, radius, instance_name):
+    return
 
 
 def mclp_ls(objective_function_value, objective_function_coordinates, dist_matrix, free_candidate_sites, dist_matrix_boolean):
