@@ -596,12 +596,49 @@ def mclp_ls(objF_value, objF_sites, free_sites, sites_with_objF):
     """
         ALGORITHM
     """
+    for i,site in enumerate(objF_sites_copy):
+        site_objF = sites_with_objF_copy[site]
+
+        for free_site in free_sites_copy:
+            free_site_objF = sites_with_objF_copy[free_site]
+
+            if free_site_objF > site_objF:
+                objF_sites_copy[i] = free_site
+            
+            else:
+                pass
+
+    new_sites_set = objF_sites_copy.copy()
     
+    # Compute new objective function value
+    new_objF_value = 0
+    for site in new_sites_set:
+        new_objF_value += sites_with_objF[site]
 
     """
         OUTPUT
     """
-    return
+    # Prepare objF_sites_copy indexes (Referencing to Excel nodes)
+    old_sites_excel = []
+    for site in objF_sites:
+        old_sites_excel.append(site+1)
+
+    # Prepare new_sites_set indexes (Referencing to Excel nodes)
+    new_sites_excel = []
+    for site in new_sites_set:
+        new_sites_excel.append(site+1)
+    
+
+    if new_objF_value > objF_copy:
+        print("[+] Solution improved.")
+        print(f"[+] NEW OBJECTIVE FUNCTION => {new_objF_value}")
+        print(f"[+] OLD SITES => {old_sites_excel}")
+        print(f"[+] NEW SITES => {new_sites_excel}")
+        return new_sites_set, new_objF_value
+
+    else:
+        print("Solution couldn't be improved.")
+        return None, None
 
 
 if __name__ == '__main__':
