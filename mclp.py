@@ -599,11 +599,12 @@ def mclp_ls(objF_value, objF_sites, free_sites, sites_with_objF):
     for i,site in enumerate(objF_sites_copy):
         site_objF = sites_with_objF_copy[site]
 
-        for free_site in free_sites_copy:
+        for fr_i, free_site in enumerate(free_sites_copy):
             free_site_objF = sites_with_objF_copy[free_site]
 
             if free_site_objF > site_objF:
                 objF_sites_copy[i] = free_site
+                free_sites_copy.pop(fr_i)
             
             else:
                 pass
