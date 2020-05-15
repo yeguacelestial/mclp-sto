@@ -415,7 +415,7 @@ def mclp_ga(population_points, candidate_sites_points, number_sites_to_select, r
     # Solution - Covered population
     print(f"[+] SOLUTION - OBJECTIVE FUNCTION (COVERED POPULATION) => {objective_function}")
 
-    return 
+    return
 
 
 def mclp_ch(population_points, candidate_sites_points, number_sites_to_select, radius, instance_name):
@@ -485,10 +485,12 @@ def mclp_ch(population_points, candidate_sites_points, number_sites_to_select, r
     for site in sites_with_covered_nodes:
         print(f"SITE {site+1} => {len(sites_with_covered_nodes[site])} nodes covered")
 
-    # 1. Start with an empty solution
+    # Start with an empty solution
     selected_sites = []
     population_size = len(population_points)
+    free_sites = sites_with_covered_nodes.copy()
 
+    # Iterate until a feasible solution is found
     for site in sites_with_covered_nodes:
         current_covered_nodes = []
         total_covered_nodes = sum(current_covered_nodes)
@@ -500,17 +502,39 @@ def mclp_ch(population_points, candidate_sites_points, number_sites_to_select, r
 
         if (c1 and c2 and c3) == True:
             current_covered_nodes.append(sites_with_covered_nodes[site])
-            selected_sites.append(site+1)
+            selected_sites.append(site)
+            free_sites.pop(site)
         elif c1 == False:
             pass
         else:
             break
-        
+
+    # Create dictionary with the sum of covered nodes
+    sites_with_objective_function = {}
+    for site in sites_with_covered_nodes:
+        sites_with_objective_function[site] = len(sites_with_covered_nodes[site])
+
+    # Compute objective function
+    objective_function = 0
+    for site in selected_sites:
+        objective_function += sites_with_objective_function[site]
+
+    # Create selected sites Excel copy
+    selected_sites_excel_copy = [site+1 for site in selected_sites]
+    
+    # Create free sites Excel copy
+    free_sites_excel_copy = []
+    for site in free_sites:
+        free_sites_excel_copy.append(site+1)
+
     """
         OUTPUT
     """
     print("\n[+++] OUTPUT [+++]")
-    print(f"SELECTED SITES => {selected_sites}")
+    print(f"[+] SELECTED SITES => {selected_sites_excel_copy}")
+    print(f"[+] FREE SITES => {free_sites_excel_copy}")
+    print(f"[+] OBJECTIVE FUNCTION (Covered population/points) => {objective_function}")
+    
     return
 
 
