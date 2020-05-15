@@ -213,20 +213,20 @@ def getInput():
 
 
 def mclp(number_of_sites, radius, instance_file):
-    # Start CH timer
-    ch_time_start = time.clock()
+    # Start GA timer
+    ga_time_start = time.clock()
 
-    # Solve MCLP by CH (Constructive Heuristic)
+    # Solve MCLP by GA (Greedy Adding)
     data = read_data(instance_file)
     population_coordinates = data[0]
     candidate_sites_coordinates = data[1]
 
     print(f"\n[*] Computing instance {instance_file}...")
-    ch_data = mclp_ch(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
+    ga_data = mclp_ga(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
     
-    # End CH timer
-    ch_time_elapsed = time.clock() - ch_time_start
-    print(f"[+] Constructive Heuristic execution time: {ch_time_elapsed}s")
+    # End GA timer
+    ga_time_elapsed = time.clock() - ga_time_start
+    print(f"[+] Greedy Adding algorithm execution time: {ga_time_elapsed}s")
 
     # objective_function_value = ch_data[0]
     # objective_function_coordinates = ch_data[1]
@@ -261,8 +261,8 @@ def read_data(file):
     return population_coordinates, candidate_sites_coordinates
 
 
-def mclp_ch(population_points, candidate_sites_points, number_sites_to_select, radius, instance_name):
-    print("\n[***] CONSTRUCTIVE HEURISTIC [***]")
+def mclp_ga(population_points, candidate_sites_points, number_sites_to_select, radius, instance_name):
+    print("\n[***] GREEDY ADDING ALGORITHM [***]")
     """
         INPUT
     """
