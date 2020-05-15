@@ -109,10 +109,10 @@ Constructive Heuristic
 Local Search Heuristic
         INPUT:
             * CONSTRUCTIVE HEURISTIC Solution
-                -> current_objF_value = Objective function value
-                -> current_objF_sites = Objective function sites
+                -> objF_value = Objective function value
+                -> objF_sites = Objective function sites
             * free_sites = List of current free sites
-            * sites_with_objF_dict = Dict of sites with their objective function
+            * sites_with_objF = Dict of sites with their objective function
 
         OUTPUT:
             * LOCAL SEARCH Solution
@@ -121,27 +121,27 @@ Local Search Heuristic
             * Computation time
 
         ALGORITHM:
-            current_objF_copy = int(current_objF_value) <== int
-            current_objF_sites_copy = current_objF_sites.copy() <== list 
+            objF_copy = int(current_objF_value) <== int
+            objF_sites_copy = current_objF_sites.copy() <== list 
             free_sites_copy = free_sites.copy() <== list
-            sites_with_objF_copy = sites_with_objF_dict.copy() <== dict
+            sites_with_objF_copy = sites_with_objF.copy() <== dict
 
-            for i, site in enumerate(current_objF_sites_copy):
-                site_objF = sites_with_objF_dict_copy[site]
+            for i, site in enumerate(objF_sites_copy):
+                site_objF = sites_with_objF_copy[site]
 
                 for free_site in free_sites_copy:
                     free_site_objF = sites_with_objF_copy[free_site]
                     
                     if free_site_objF > site_objF:
-                        current_objF_sites_copy[i] = free_site
+                        objF_sites_copy[i] = free_site
 
                     else:
                         pass
             
-            new_sites_set => current_objF_sites_copy.copy()
+            new_sites_set => objF_sites_copy.copy()
             new_objF_value => compute population covered by new_sites_set
 
-            if new_objF_value > current_objF_copy:
+            if new_objF_value > objF_copy:
                 return new_objF_value, new_sites_set
             else:
                 print "Solution couldn't be improved"
@@ -218,7 +218,6 @@ def main():
 
         # Solve MCLP
         mclp(number_of_sites, radius, instance_file)
-
         print("\n[+] Done.")
 
     except FileNotFoundError:
@@ -261,6 +260,7 @@ def mclp(number_of_sites, radius, instance_file):
     population_coordinates = data[0]
     candidate_sites_coordinates = data[1]
 
+
     # Start CH timer
     ch_time_start = time.clock()
 
@@ -269,7 +269,26 @@ def mclp(number_of_sites, radius, instance_file):
 
     # End CH timer
     ch_time_elapsed = time.clock() - ch_time_start
-    print(f"[+] Constructive Heuristic execution time: {ga_time_elapsed}s")
+    print(f"[+] Constructive Heuristic execution time: {ch_time_elapsed}s")
+
+
+    # Start LS timer
+    ls_time_start = time.clock()
+
+    # Solve MCLP by LS (Local Search)
+
+    # Get input from CH
+    objF_value = ch_data[0]
+    objF_sites = ch_data[1]
+    free_sites = ch_data[2]
+    sites_with_objF = ch_data[3]
+
+    ls_data = mclp_ls(objF_value, objF_sites, free_sites, sites_with_objF)
+
+    # End LS timer
+    ls_time_elapsed = time.clock() - ls_time_start
+    print(f"[+] Local Search Heuristic execution time: {ls_time_elapsed}s")
+
 
     # Start GA timer
     ga_time_start = time.clock()
@@ -280,15 +299,6 @@ def mclp(number_of_sites, radius, instance_file):
     # End GA timer
     ga_time_elapsed = time.clock() - ga_time_start
     #print(f"[+] Greedy Adding algorithm execution time: {ga_time_elapsed}s")
-
-    # objective_function_value = ch_data[0]
-    # objective_function_coordinates = ch_data[1]
-    # dist_matrix_copy = ch_data[2] 
-    # free_candidate_sites = ch_data[3]
-    # dist_matrix_boolean = ch_data[4]
-
-    # Solve MCLP by LS (Local Search Heuristic)
-    #mclp_ls(objective_function_value, objective_function_coordinates, dist_matrix_copy, free_candidate_sites, dist_matrix_boolean)
 
 
 def sorted_ls(path):
@@ -551,6 +561,11 @@ def mclp_ch(population_points, candidate_sites_points, number_sites_to_select, r
     # Create selected sites Excel copy
     selected_sites_excel_copy = [site+1 for site in selected_sites]
     
+    # Create free sites indexes copy
+    free_sites_copy = []
+    for site in free_sites:
+        free_sites_copy.append(site)
+
     # Create free sites Excel copy
     free_sites_excel_copy = []
     for site in free_sites:
@@ -563,125 +578,25 @@ def mclp_ch(population_points, candidate_sites_points, number_sites_to_select, r
     print(f"[+] SELECTED SITES => {selected_sites_excel_copy}")
     print(f"[+] FREE SITES => {free_sites_excel_copy}")
     print(f"[+] OBJECTIVE FUNCTION (Covered population/points) => {objective_function}")
-    
-    return
+
+    return objective_function, selected_sites, free_sites_copy, sites_with_objective_function
 
 
-def mclp_ls(objective_function_value, objective_function_coordinates, dist_matrix, free_candidate_sites, dist_matrix_boolean):
-    """
-        Local Search Heuristic
-        INPUT:
-            * CONSTRUCTIVE HEURISTIC Solution
-                * objective_function_value ==> Objective function
-                * objective_function_coordinates ==> Objective function nodes
-            * free_candidate_sites ==> FREE Candidate sites
-            * dist_matrix ==> Distance matrix
-
-        OUTPUT:
-            * LOCAL SEARCH Solution
-                -> Objective function
-                -> Objective function nodes
-            * Computation time
-            
-    """
+def mclp_ls(objF_value, objF_sites, free_sites, sites_with_objF):
     print("\n[*] *** LOCAL SEARCH HEURISTIC ***")
-    print(f"[*] Current objective function = {objective_function_value}")
-   
-    # Create input copies
-    current_objF_value = int(objective_function_value)
-    current_objF_nodes = objective_function_coordinates.copy()
-    current_free_sites = free_candidate_sites.copy()
+    print(f"[*] Current objective function = {objF_value}")
+    """
+        INPUT
+    """
+    current_objF_copy = int()
 
-    # Create list of indexes for distance matrix
-    current_objF_sites_indexes = [node[0]-1 for node in current_objF_nodes]
-    #print(f"[*] Current objective function indexes (for dist matrix): {current_objF_sites_indexes}")
-
-    # DEBUGGING
-    current_objF_sites_indexes_excel = [node[0] for node in current_objF_nodes]
-    current_free_sites_indexes_excel = [site[0]+1 for site in current_free_sites]
-    print(f"[*] Selected sites: {current_objF_sites_indexes_excel}")
-    print(f"[*] Free sites: {current_free_sites_indexes_excel}")
-    # END DEBUGGING
-
-    # Create list of indexes of FREE candidate sites for distance matrix
-    current_free_sites_indexes = [site[0] for site in current_free_sites]
-    #print(f"[*] Current free sites indexes (for dist matrix): {current_free_sites_indexes}")
-
-    # START TIMER
-    time_start = time.clock()
-
-    # Algorithm
-    # Compute OBJECTIVE FUNCTION and COVERED NODES of a given solution
-    def compute_covered_nodes(solution):
-        # Get covered nodes by current objective function
-        covered_nodes = []
-        for site in solution:
-            # Stores each node that is covered by site
-            covered_node_index = np.where(dist_matrix_boolean[:, site] == True)[0]
-            for node in covered_node_index:
-                covered_nodes.append(node)
-
-        # Remove duplicated nodes
-        covered_nodes = list(dict.fromkeys(covered_nodes))
-
-        return covered_nodes, len(covered_nodes)
-
-    covered_population_data = compute_covered_nodes(current_objF_sites_indexes)
-    covered_population_nodes = covered_population_data[0]
-    covered_population_objF = covered_population_data[1]
-
-    # 
-    print(f"\n[*] CURRENT COVERED POPULATION => {covered_population_nodes}")
-    #print(f"[*] SITES INITIAL SET => {current_objF_sites_indexes}")
-
-    current_sites_data = []
-    for site in current_objF_sites_indexes:
-        covered_population_by_site_data = compute_covered_nodes([site])
-        nodes_covered = covered_population_by_site_data[0]
-        objective = covered_population_by_site_data[1]
-
-        current_sites_data.append((site, objective, nodes_covered))
-        print(f"POPULATION COVERED BY SITE {site+1} => {objective}")
-        print(f"NODES COVERED => {nodes_covered}\n")
-    
-    free_sites_data = []
-    print(f"\n[*] FREE SITES INITIAL SET => {current_free_sites_indexes}")
-    for site in current_free_sites_indexes:
-        covered_population_by_site_data = compute_covered_nodes([site])
-        nodes_covered = covered_population_by_site_data[0]
-        objective = covered_population_by_site_data[1]
-
-        free_sites_data.append((site, objective, nodes_covered))
-        print(f"POPULATION COVERED BY FREE SITE {site} => {objective}")
-
-    #print(f"[*] CURRENT SITES: {current_sites_data}")
-    for i, site in enumerate(current_sites_data):
-        current_site = site[0]
-        current_site_objF = site[1]
-        current_site_population = site[2]
-        
-        for free_i, fr_site in enumerate(free_sites_data):
-            free_site = fr_site[0]
-            free_site_objF = fr_site[1]
-            free_site_population = fr_site[2]
-            #print(f"MOVE({current_site},{free_site})")
-            
-            if free_site_objF > current_site_objF:
-                current_sites_data[i] = free_site
-                free_sites_data.pop(free_i)
-
-    #print(f"[*] NEW SITES: {current_sites_data}")
-    print(f"\nPOPULATION COVERED BY SITE 0 => {compute_covered_nodes([0])[0]}")
-    print(f"\nPOPULATION COVERED BY SITE 2 => {compute_covered_nodes([2])[0]}")
-    print(f"\nPOPULATION COVERED BY SITE 5 => {compute_covered_nodes([5])[0]}")
-    print(f"\nPOPULATION COVERED BY SITE 7 => {compute_covered_nodes([7])[0]}")
-    print(f"\nPOPULATION COVERED BY SITE 13 => {compute_covered_nodes([13])[0]}")
-
-    print(f"\nPOPULATION COVERED BY FREE SITE 17 => {compute_covered_nodes([17])[0]}")
-
-    # END TIMER
-    time_elapsed = time.clock() - time_start
-    print(f"\n[+] LS Execution Time: {time_elapsed}s")
+    """
+        ALGORITHM
+    """
+    """
+        OUTPUT
+    """
+    return
 
 
 if __name__ == '__main__':
