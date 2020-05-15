@@ -86,7 +86,7 @@ Constructive Heuristic
         
         PSEUDOCODE:
             selected_sites = []
-            total_population_points = len(population_points)
+            population_size = len(population_points)
 
             For site in candidate_sites:
                 current_covered_nodes <== compute_covered_nodes(selected_sites)
@@ -94,7 +94,7 @@ Constructive Heuristic
 
                 r1 = covered_nodes(boolean_matrix(site)) > 0
                 r2 = len(selected_sites) < number_sites_to_select
-                r3 = number_of_covered_nodes < total_population_points
+                r3 = number_of_covered_nodes < population_size
 
                 if r1 and r2 and r3 == True:
                     selected_sites.append(site)
@@ -204,6 +204,7 @@ def main():
     except TypeError:
         print(Fore.RED + "[-] Error: input couldn't be read." + Style.RESET_ALL)
         print(Fore.YELLOW + "[*] Use 'mclp.py -h' for usage info." + Style.RESET_ALL)
+        raise
 
     except Exception as e:
         raise
@@ -230,20 +231,32 @@ def getInput():
 
 
 def mclp(number_of_sites, radius, instance_file):
-    # Start GA timer
-    ga_time_start = time.clock()
+    print(f"\n[*] Computing instance {instance_file}...")
 
-    # Solve MCLP by GA (Greedy Adding)
+    # Read input data
     data = read_data(instance_file)
     population_coordinates = data[0]
     candidate_sites_coordinates = data[1]
 
-    print(f"\n[*] Computing instance {instance_file}...")
-    ga_data = mclp_ga(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
+    # Start GA timer
+    ga_time_start = time.clock()
+
+    # Solve MCLP by GA (Greedy Adding)
+    #ga_data = mclp_ga(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
     
     # End GA timer
     ga_time_elapsed = time.clock() - ga_time_start
-    print(f"[+] Greedy Adding algorithm execution time: {ga_time_elapsed}s")
+    #print(f"[+] Greedy Adding algorithm execution time: {ga_time_elapsed}s")
+
+    # Start CH timer
+    ch_time_start = time.clock()
+
+    # Solve MCLP by CH (Constructive Heuristic)
+    ch_data = mclp_ch(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
+
+    # End CH timer
+    ch_time_elapsed = time.clock() - ch_time_start
+    print(f"[+] Constructive Heuristic execution time: {ga_time_elapsed}s")
 
     # objective_function_value = ch_data[0]
     # objective_function_coordinates = ch_data[1]
@@ -406,6 +419,98 @@ def mclp_ga(population_points, candidate_sites_points, number_sites_to_select, r
 
 
 def mclp_ch(population_points, candidate_sites_points, number_sites_to_select, radius, instance_name):
+    print("\n[***] CONSTRUCTIVE HEURISTIC ALGORITHM [***]")
+    """
+        INPUT
+    """
+    print("\n[+++] INPUT [+++]")
+
+    # Assocciate index to each population coordinate
+    print(f"[*] POPULATION POINTS => {len(population_points)}")
+    print(f"[*] CANDIDATE SITES => {len(candidate_sites_points)}")
+    print(f"[*] NUMBER OF SITES TO SELECT => {number_sites_to_select}")
+    print(f"[*] RADIUS => {radius}")
+    print(f"[*] INSTANCE NAME => {instance_name}")
+
+    # Associate index to population points, starting from 1
+    population_points_with_index = []
+    for point in population_points:
+        population_points_with_index.append((population_points.index(point)+1, point))
+    
+    # Associate index to candidate sites, starting from 1
+    candidate_sites_points_with_index = []
+    for point in candidate_sites_points:
+        candidate_sites_points_with_index.append((candidate_sites_points.index(point),point))
+
+    # Cast to numpy arrays
+    population_points = array(population_points)
+    candidate_sites_points = array(candidate_sites_points)
+    
+    # Size of I and J
+    I_size = population_points.shape[0]
+    J_size = candidate_sites_points.shape[0]
+
+    """
+        ALGORITHM
+    """
+    # Compute distance matrix
+    from scipy.spatial.distance import cdist
+    dist_matrix = cdist(population_points, candidate_sites_points, 'euclidean').astype(int)
+    
+    # Compute boolean matrix
+    boolean_matrix = dist_matrix.copy()
+    constraint1 = dist_matrix <= radius # Validates if demand point 'i' is under radius of site 'j'
+    boolean_matrix[constraint1] = 1 # Stores boolean 'True' if demand point 'i' is under radius of site 'j'
+    boolean_matrix[~constraint1] = 0 # Stores boolean 'False' if demand point 'i' is NOT under radius of site 'j'
+    
+    # Compute INDIVIDUAL covered nodes by each site in boolean matrix
+    current_covered_nodes = []
+    sites_with_covered_nodes = {}
+
+    # for site in boolean_matrix...
+    for i, site in candidate_sites_points_with_index:
+        site_all_covered_nodes = np.where(boolean_matrix[:,i] == True)[0]
+        site_individual_covered_nodes = []
+
+        # for node in site:
+        for node in site_all_covered_nodes:
+            if node not in current_covered_nodes:
+                site_individual_covered_nodes.append(node)
+                current_covered_nodes.append(node)
+            else:
+                pass
+
+        sites_with_covered_nodes[i] = site_individual_covered_nodes
+    
+    for site in sites_with_covered_nodes:
+        print(f"SITE {site+1} => {len(sites_with_covered_nodes[site])} nodes covered")
+
+    # 1. Start with an empty solution
+    selected_sites = []
+    population_size = len(population_points)
+
+    for site in sites_with_covered_nodes:
+        current_covered_nodes = []
+        total_covered_nodes = sum(current_covered_nodes)
+
+        # Constraints
+        c1 = len(sites_with_covered_nodes[site]) > 0
+        c2 = len(selected_sites) < number_sites_to_select
+        c3 = total_covered_nodes < population_size
+
+        if (c1 and c2 and c3) == True:
+            current_covered_nodes.append(sites_with_covered_nodes[site])
+            selected_sites.append(site+1)
+        elif c1 == False:
+            pass
+        else:
+            break
+        
+    """
+        OUTPUT
+    """
+    print("\n[+++] OUTPUT [+++]")
+    print(f"SELECTED SITES => {selected_sites}")
     return
 
 
