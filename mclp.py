@@ -6,7 +6,7 @@ PROGRAM INPUT:
 * Service radius of each site >> radius
 * Desired population to cover >> M
 *********************************************
-Constructive Heuristic:
+Greddy Adding Algorithm
     INPUT:
         * population_points
         * candidate_sites_points
@@ -52,6 +52,41 @@ Constructive Heuristic:
             len(solution) === number_sites_to_select
                         or
             len(compute_covered_nodes(solution)[covered nodes]) === len(population_points)
+
+*********************************************
+Constructive Heuristic
+        INPUT:
+            * population_points
+            * candidate_sites_points
+            * number_sites_to_select
+            * radius
+            * instance_name
+        OUTPUT:
+            * Selected sites
+            * Objective function (Population covered)
+
+        ALGORITHM:
+            1. Start with an empty solution
+                selected_sites <== []
+
+            2. Restrictions for adding a site to selected_sites:
+                r1 <== site has nodes under radius == (1,0)
+                r2 <== len(selected_sites) < number_sites_to_select == (1, 0)
+                r3 <== current_covered_nodes < population_points == (1, 0)
+
+            3. Iterate candidate sites and compute covered nodes of each one
+            
+            4. Repeat step 3 while r2 or r3 are not true
+
+            5. Return: selected_sites
+
+            6. objF <== Compute objective function of selected_sites
+
+            7. Return: objF
+        
+        PSEUDOCODE:
+            For site in candidate_sites:
+                current_covered_nodes <== compute_covered_nodes(selected_sites)
 
 *********************************************
 Local Search Heuristic
@@ -330,6 +365,11 @@ def mclp_ch(population_points, candidate_sites_points, number_sites_to_select, r
     for site in selected_sites:
         objective_function += sites_with_objective_function_copy[site]
 
+    # Filter free sites (With Excel index)
+    free_sites = []
+    for site in sites_with_objective_function:
+        free_sites.append(site+1)
+
     """
         OUTPUT
     """
@@ -338,6 +378,9 @@ def mclp_ch(population_points, candidate_sites_points, number_sites_to_select, r
     # Solution - Selected sites (Display Excel instances nodes)
     selected_sites_excel_instance = [site+1 for site in selected_sites]
     print(f"[+] SOLUTION - SELECTED SITES => {selected_sites_excel_instance}")
+
+    # Free sites
+    print(f"[+] FREE SITES => {free_sites}")
 
     # Solution - Covered population
     print(f"[+] SOLUTION - OBJECTIVE FUNCTION (COVERED POPULATION) => {objective_function}")
