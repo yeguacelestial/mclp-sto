@@ -109,17 +109,42 @@ Constructive Heuristic
 Local Search Heuristic
         INPUT:
             * CONSTRUCTIVE HEURISTIC Solution
-                -> Objective function
-                -> Objective function nodes
-            * FREE Candidate sites
-            * Distance matrix
+                -> current_objF_value = Objective function value
+                -> current_objF_sites = Objective function sites
+            * free_sites = List of current free sites
+            * sites_with_objF_dict = Dict of sites with their objective function
+
         OUTPUT:
             * LOCAL SEARCH Solution
                 -> Objective function
                 -> Objective function nodes
             * Computation time
+
         ALGORITHM:
+            current_objF_copy = int(current_objF_value) <== int
+            current_objF_sites_copy = current_objF_sites.copy() <== list 
+            free_sites_copy = free_sites.copy() <== list
+            sites_with_objF_copy = sites_with_objF_dict.copy() <== dict
+
+            for i, site in enumerate(current_objF_sites_copy):
+                site_objF = sites_with_objF_dict_copy[site]
+
+                for free_site in free_sites_copy:
+                    free_site_objF = sites_with_objF_copy[free_site]
+                    
+                    if free_site_objF > site_objF:
+                        current_objF_sites_copy[i] = free_site
+
+                    else:
+                        pass
             
+            new_sites_set => current_objF_sites_copy.copy()
+            new_objF_value => compute population covered by new_sites_set
+
+            if new_objF_value > current_objF_copy:
+                return new_objF_value, new_sites_set
+            else:
+                print "Solution couldn't be improved"
 
 *********************************************
 PROGRAM OUTPUT:
@@ -135,11 +160,9 @@ with Substitution Algorithm iterate each "free" site and compares the objective 
 to a site inside the given solution. That could work. Remember. Local Search seeks to improve a given solution
 by making small movements on it. 
 *********************************************
-NOTE: About Local Search: why replace one site when you can replace two. Sum two of them, and compare them between another
-two free sites. Try something like that.
 """
 
-# TODO: Refactor Constructive Heuristic
+# TODO: Fix Local Search algorithm
 
 import colorama
 import numpy as np
@@ -238,16 +261,6 @@ def mclp(number_of_sites, radius, instance_file):
     population_coordinates = data[0]
     candidate_sites_coordinates = data[1]
 
-    # Start GA timer
-    ga_time_start = time.clock()
-
-    # Solve MCLP by GA (Greedy Adding)
-    #ga_data = mclp_ga(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
-    
-    # End GA timer
-    ga_time_elapsed = time.clock() - ga_time_start
-    #print(f"[+] Greedy Adding algorithm execution time: {ga_time_elapsed}s")
-
     # Start CH timer
     ch_time_start = time.clock()
 
@@ -257,6 +270,16 @@ def mclp(number_of_sites, radius, instance_file):
     # End CH timer
     ch_time_elapsed = time.clock() - ch_time_start
     print(f"[+] Constructive Heuristic execution time: {ga_time_elapsed}s")
+
+    # Start GA timer
+    ga_time_start = time.clock()
+
+    # Solve MCLP by GA (Greedy Adding)
+    #ga_data = mclp_ga(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
+    
+    # End GA timer
+    ga_time_elapsed = time.clock() - ga_time_start
+    #print(f"[+] Greedy Adding algorithm execution time: {ga_time_elapsed}s")
 
     # objective_function_value = ch_data[0]
     # objective_function_coordinates = ch_data[1]
@@ -359,7 +382,10 @@ def mclp_ga(population_points, candidate_sites_points, number_sites_to_select, r
         sites_with_covered_nodes[i] = site_individual_covered_nodes
     
     for site in sites_with_covered_nodes:
-        print(f"SITE {site+1} => {len(sites_with_covered_nodes[site])} nodes covered")
+        nodes_covered_by_site = len(sites_with_covered_nodes[site])
+
+        if nodes_covered_by_site > 0:
+            print(f"SITE {site+1} => {nodes_covered_by_site} nodes covered")
     
     # 5. Pick the site that covers most of the total population
     # Create dictionary with the sum of covered nodes
@@ -483,7 +509,10 @@ def mclp_ch(population_points, candidate_sites_points, number_sites_to_select, r
         sites_with_covered_nodes[i] = site_individual_covered_nodes
     
     for site in sites_with_covered_nodes:
-        print(f"SITE {site+1} => {len(sites_with_covered_nodes[site])} nodes covered")
+        nodes_covered_by_site = len(sites_with_covered_nodes[site])
+        
+        if nodes_covered_by_site > 0:
+            print(f"SITE {site+1} => {nodes_covered_by_site} nodes covered")
 
     # Start with an empty solution
     selected_sites = []
