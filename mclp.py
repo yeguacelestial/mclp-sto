@@ -134,6 +134,7 @@ Local Search Heuristic
                     
                     if free_site_objF > site_objF:
                         objF_sites_copy[i] = free_site
+                        free_sotes_copy.pop(free_site)
 
                     else:
                         pass
@@ -162,7 +163,7 @@ by making small movements on it.
 *********************************************
 """
 
-# TODO: Fix Local Search algorithm
+# TODO: Compute Experiments results
 
 import colorama
 import numpy as np
@@ -226,11 +227,10 @@ def main():
     except TypeError:
         print(Fore.RED + "[-] Error: input couldn't be read." + Style.RESET_ALL)
         print(Fore.YELLOW + "[*] Use 'mclp.py -h' for usage info." + Style.RESET_ALL)
-        raise
 
     except Exception as e:
+        print("[-] Error: something went wrong.")
         raise
-        #print("[-] Error: something went wrong.")
 
 
 def getInput():
