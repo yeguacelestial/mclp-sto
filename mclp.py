@@ -277,27 +277,31 @@ def mclp(number_of_sites, radius, instance_file):
 
     # Solve MCLP by LS (Local Search)
 
-    # Get input from CH
-    objF_value = ch_data[0]
-    objF_sites = ch_data[1]
-    free_sites = ch_data[2]
-    sites_with_objF = ch_data[3]
+    # Get output from CH
+    ch_objF_value = ch_data[0]
+    ch_objF_sites = ch_data[1]
+    ch_free_sites = ch_data[2]
+    ch_sites_with_objF = ch_data[3]
 
-    ls_data = mclp_ls(objF_value, objF_sites, free_sites, sites_with_objF)
-
+    # Get output from LS
+    ls_objF_sites, ls_objF_value = mclp_ls(ch_objF_value, ch_objF_sites, ch_free_sites, ch_sites_with_objF)
+    
     # End LS timer
     ls_time_elapsed = time.clock() - ls_time_start
     print(f"[+] Local Search Heuristic execution time: {ls_time_elapsed}s")
 
+    # Final MCLP output
+    print(f"[+] FINAL CH OBJECTIVE FUNCTION => {ch_objF_value}")
+    print(f"[+] FINAL LS OBJECTIVE FUNCTION => {ls_objF_value}")
 
     # Start GA timer
-    ga_time_start = time.clock()
+    #ga_time_start = time.clock()
 
     # Solve MCLP by GA (Greedy Adding)
     #ga_data = mclp_ga(population_coordinates, candidate_sites_coordinates, number_of_sites, radius, instance_file)
     
     # End GA timer
-    ga_time_elapsed = time.clock() - ga_time_start
+    #ga_time_elapsed = time.clock() - ga_time_start
     #print(f"[+] Greedy Adding algorithm execution time: {ga_time_elapsed}s")
 
 
@@ -638,8 +642,8 @@ def mclp_ls(objF_value, objF_sites, free_sites, sites_with_objF):
         return new_sites_set, new_objF_value
 
     else:
-        print("Solution couldn't be improved.")
-        return None, None
+        print("[-] Solution couldn't be improved.")
+        return objF_sites, objF_value
 
 
 if __name__ == '__main__':
