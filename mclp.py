@@ -291,8 +291,16 @@ def mclp(number_of_sites, radius, instance_file):
     print(f"[+] Local Search Heuristic execution time: {ls_time_elapsed}s")
 
     # Final MCLP output
-    print(f"[+] FINAL CH OBJECTIVE FUNCTION => {ch_objF_value}")
-    print(f"[+] FINAL LS OBJECTIVE FUNCTION => {ls_objF_value}")
+    print(f"\n--------------- CONSTRUCTIVE HEURISTIC RESULTS ---------------")
+    print(f"[*] File => {instance_file}")
+    print(f"[+] Objective Function => {ch_objF_value}")
+    print(f"[+] Execution time => {ch_time_elapsed}s")
+    print(f"--------------- LOCAL SEARCH HEURISTIC RESULTS ---------------")
+    print(f"[*] File => {instance_file}")
+    print(f"[+] Objective Function => {ls_objF_value}")
+    print(f"[+] Execution time => {ls_time_elapsed}")
+    print("--------------------------------------------------------------\n\n")
+
 
     # Start GA timer
     #ga_time_start = time.clock()
