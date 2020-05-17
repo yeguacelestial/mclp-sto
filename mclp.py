@@ -364,15 +364,22 @@ def plot_input(population_coordinates, candidate_sites_coordinates):
     candidate_sites_coordinates = array(candidate_sites_coordinates)
 
     from matplotlib import pyplot as plt
-
     fig = plt.figure(figsize=(8,8))
+
+    fig.suptitle('INPUT', fontsize=14, fontweight='bold')
+
     plt.scatter(population_coordinates[:,0], population_coordinates[:,1], c='C0', s=1)
     plt.scatter(candidate_sites_coordinates[:,0], candidate_sites_coordinates[:, 1], c='red')
     ax = plt.gca()
+
+    ax.set_title(f'Population/Demand color: Blue\nCandidate sites color: Red')
+
     ax.axis('equal')
-    ax.tick_params(axis='both', left=False, top=False, right=False,
-                    bottom=False, labelleft=False, labeltop=False,
-                    labelright=False, labelbottom=False)
+    ax.tick_params(axis='both', left=True, top=False, right=False,
+                    bottom=True, labelleft=True, labeltop=False,
+                    labelright=False, labelbottom=True)
+
+    ax.set_xlabel(f'Population/Demand points: {len(population_coordinates)}\nCandidate sites: {len(candidate_sites_coordinates)}')
     plt.show()
 
 
@@ -720,9 +727,9 @@ def plot_output(population_coordinates, candidate_sites_coordinates, ch_objF_sit
         ax.add_artist(circle)
 
     ax.axis('equal')
-    ax.tick_params(axis='both',left=False, top=False, right=False,
-                       bottom=False, labelleft=False, labeltop=False,
-                       labelright=False, labelbottom=False)
+    ax.tick_params(axis='both',left=True, top=False, right=False,
+                       bottom=True, labelleft=True, labeltop=False,
+                       labelright=False, labelbottom=True)
     ax.set_xlabel(f'CH - Objective Function: {ch_objF_value}\nLS - Objective Function: {ls_objF_value}')
     plt.show()
     return
