@@ -204,15 +204,15 @@ def main():
         # Sort excel files by modified date
         instances_directory_list = sorted_ls(instances_directory)
 
-        # Create results excel file
-        results_excel = pd.ExcelWriter(f'{instances_directory}_results.xlsx', engine='xlsxwriter')
-
         # Create dict for each instance
         instances_dict = {}
 
         # Read each instance file
         for instance in instances_directory_list:
             instance_file = f'{instances_directory}/{instance}'
+
+            # Write results to excel file
+            results_excel = pd.ExcelWriter(f'{instances_directory}_results.xlsx', engine='xlsxwriter')
 
             # Solve MCLP
             ch_objF_value, ch_time_elapsed, ls_objF_value, ls_time_elapsed = mclp(number_of_sites, radius, instance_file)
@@ -223,6 +223,7 @@ def main():
             dataframe = computational_results(instances_dict)
             dataframe.to_excel(results_excel, sheet_name="Computation results")
             results_excel.save()
+
         print("\n[+] Done.")
             
     # Process single file instance
