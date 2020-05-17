@@ -187,6 +187,7 @@ def main():
         exit()
     
     instances_directory = options.directory
+    instances_directory = instances_directory.replace('/','')
     number_of_sites = options.sites
     radius = options.radius
 
@@ -213,6 +214,7 @@ def main():
             # Compute experimental results
             dataframe = computational_results(instances_dict)
             dataframe.to_excel(results_excel, sheet_name="Computation results")
+
             results_excel.save()
 
         print("\n[+] Done.")
@@ -697,12 +699,20 @@ def plot_output(population_coordinates, candidate_sites_coordinates, ch_objF_sit
     candidate_sites_coordinates = array(candidate_sites_coordinates)
 
     fig = plt.figure(figsize=(8,8))
+
     plt.scatter(population_coordinates[:,0], population_coordinates[:,1], c='C0', s=1)
     plt.scatter(candidate_sites_coordinates[:,0], candidate_sites_coordinates[:,1], c='red')
     ax = plt.gca()
 
+    # Mark CH sites
     for site in ch_objF_sites:
-        plt.scatter(candidate_sites_coordinates[site,0], candidate_sites_coordinates[site,1], c='green')
+        plt.scatter(candidate_sites_coordinates[site,0], candidate_sites_coordinates[site,1], c='green', marker='+')
+        circle = plt.Circle(candidate_sites_coordinates[site], radius, color='green', fill=False, lw=2)
+        ax.add_artist(circle)
+
+    # Mark LS sites
+    for site in ls_objF_sites:
+        plt.scatter(candidate_sites_coordinates[site,0], candidate_sites_coordinates[site,1], c='black', marker='+')
         circle = plt.Circle(candidate_sites_coordinates[site], radius, color='black', fill=False, lw=2)
         ax.add_artist(circle)
 
