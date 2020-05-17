@@ -158,7 +158,7 @@ by making small movements on it.
 *********************************************
 """
 
-# TODO: Compute Experiments results
+# TODO: Plot input/output
 
 import numpy as np
 import openpyxl
@@ -220,8 +220,19 @@ def main():
     except NotADirectoryError as e:
         instance_file = f'{instances_directory}'
 
+        # Write results to excel file
+        results_excel = pd.ExcelWriter(f'{instance_file[:-6]}_results.xlsx', engine='xlsxwriter')
+
         # Solve MCLP
-        mclp(number_of_sites, radius, instance_file)
+        ch_objF_value, ch_time_elapsed, ls_objF_value, ls_time_elapsed = mclp(number_of_sites, radius, instance_file)
+        
+        instances_dict = {}
+        instances_dict[instance_file] = [ch_objF_value, ch_time_elapsed, ls_objF_value, ls_time_elapsed]
+
+        dataframe = computational_results(instances_dict)
+        dataframe.to_excel(results_excel, sheet_name="Computation results")
+        results_excel.save()
+
         print("\n[+] Done.")
 
     except FileNotFoundError:
