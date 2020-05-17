@@ -697,7 +697,7 @@ def computational_results(instances_dict):
         absolute_imp_column.append(abs_imp)
 
         # Calculate relative improvement
-        rel_imp = abs_imp/ch_of
+        rel_imp = "{:.2%}".format(abs_imp/ch_of)
         relative_imp_column.append(rel_imp)
     
     # Create pandas dataframe
@@ -708,6 +708,7 @@ def computational_results(instances_dict):
                        'LS_time (cpu sec)': ls_time_column,
                        'ABSOLUTE IMP': absolute_imp_column,
                        'RELATIVE IMP': relative_imp_column})
+    df.index+=1
     print(df)
     return
    
