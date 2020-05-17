@@ -204,6 +204,9 @@ def main():
         # Sort excel files by modified date
         instances_directory_list = sorted_ls(instances_directory)
 
+        # Create results excel file
+        results_excel = pd.ExcelWriter(f'{instances_directory}_results.xlsx', engine='xlsxwriter')
+
         # Create dict for each instance
         instances_dict = {}
 
@@ -217,8 +220,9 @@ def main():
             instances_dict[instance] = [ch_objF_value, ch_time_elapsed, ls_objF_value, ls_time_elapsed]
         
             # Compute experimental results
-            computational_results(instances_dict)
-
+            dataframe = computational_results(instances_dict)
+            dataframe.to_excel(results_excel, sheet_name="Computation results")
+            results_excel.save()
         print("\n[+] Done.")
             
     # Process single file instance
@@ -710,7 +714,8 @@ def computational_results(instances_dict):
                        'RELATIVE IMP': relative_imp_column})
     df.index+=1
     print(df)
-    return
+
+    return df
    
 if __name__ == '__main__':
     main()
