@@ -1,10 +1,5 @@
 """
-MAXIMUM COVERING LOCATION PROBLEM - Constructive Heuristic and Local Search Heuristic
-PROGRAM INPUT:
-* Instance >> coord
-* Number of sites to select >> S
-* Service radius of each site >> radius
-* Desired population to cover >> M
+MAXIMUM COVERING LOCATION PROBLEM - Constructive and Local Search Heuristics
 *********************************************
 Greddy Adding Algorithm
     INPUT:
@@ -165,15 +160,12 @@ by making small movements on it.
 
 # TODO: Compute Experiments results
 
-import colorama
 import numpy as np
 import openpyxl
 import os
 import pandas as pd
 import time
 
-from colorama import Fore, Back, Style
-from gurobipy import *
 from numpy import array
 from openpyxl import load_workbook
 from os import listdir
@@ -181,8 +173,6 @@ from optparse import OptionParser
 
 
 def main():
-    colorama.init()
-
     # Get input
     get_input = getInput()
     options = get_input[0]
@@ -238,8 +228,8 @@ def main():
         print("[-] Error: File not found.")
     
     except TypeError:
-        print(Fore.RED + "[-] Error: input couldn't be read." + Style.RESET_ALL)
-        print(Fore.YELLOW + "[*] Use 'mclp.py -h' for usage info." + Style.RESET_ALL)
+        print("[-] Error: input couldn't be read.")
+        print("[*] Use 'mclp.py -h' for usage info.")
 
     except Exception as e:
         print("[-] Error: something went wrong.")
