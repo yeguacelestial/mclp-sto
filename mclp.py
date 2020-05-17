@@ -204,13 +204,21 @@ def main():
         # Sort excel files by modified date
         instances_directory_list = sorted_ls(instances_directory)
 
+        # Create dict for each instance
+        instances_dict = {}
+
         # Read each instance file
         for instance in instances_directory_list:
             instance_file = f'{instances_directory}/{instance}'
 
-            # Solve MCLP - Constructive Heuristic
-            mclp(number_of_sites, radius, instance_file)
+            # Solve MCLP
+            ch_objF_value, ch_time_elapsed, ls_objF_value, ls_time_elapsed = mclp(number_of_sites, radius, instance_file)
+
+            instances_dict[instance] = [ch_objF_value, ch_time_elapsed, ls_objF_value, ls_time_elapsed]
         
+            # Compute experimental results
+            computational_results(instances_dict)
+
         print("\n[+] Done.")
             
     # Process single file instance
@@ -301,7 +309,6 @@ def mclp(number_of_sites, radius, instance_file):
     print(f"[+] Execution time => {ls_time_elapsed}")
     print("--------------------------------------------------------------\n\n")
 
-
     # Start GA timer
     #ga_time_start = time.clock()
 
@@ -311,6 +318,8 @@ def mclp(number_of_sites, radius, instance_file):
     # End GA timer
     #ga_time_elapsed = time.clock() - ga_time_start
     #print(f"[+] Greedy Adding algorithm execution time: {ga_time_elapsed}s")
+
+    return ch_objF_value, ch_time_elapsed, ls_objF_value, ls_time_elapsed
 
 
 def sorted_ls(path):
@@ -654,5 +663,53 @@ def mclp_ls(objF_value, objF_sites, free_sites, sites_with_objF):
         return objF_sites, objF_value
 
 
+def computational_results(instances_dict):
+    instance_column = []
+    ch_of_column = []
+    ch_time_column = []
+    ls_of_column = []
+    ls_time_column = []
+    absolute_imp_column = []
+    relative_imp_column = []
+
+    for instance in instances_dict:
+        # Add instance
+        instance_column.append(instance)
+
+        # Add CH OF
+        ch_of = instances_dict[instance][0]
+        ch_of_column.append(ch_of)
+
+        # Add CH TIME
+        ch_time = instances_dict[instance][1]
+        ch_time_column.append(ch_time)
+
+        # Add LS OF
+        ls_of = instances_dict[instance][2]
+        ls_of_column.append(ls_of)
+
+        # Add LS TIME
+        ls_time = instances_dict[instance][3]
+        ls_time_column.append(ls_time)
+
+        # Calculate absolute improvement
+        abs_imp = abs(ls_of-ch_of)
+        absolute_imp_column.append(abs_imp)
+
+        # Calculate relative improvement
+        rel_imp = abs_imp/ch_of
+        relative_imp_column.append(rel_imp)
+    
+    # Create pandas dataframe
+    df = pd.DataFrame({'INSTANCE': instance_column,
+                       'CH_OF': ch_of_column,
+                       'CH_time (cpu sec)': ch_time_column,
+                       'LSH_OF': ls_of_column,
+                       'LS_time (cpu sec)': ls_time_column,
+                       'ABSOLUTE IMP': absolute_imp_column,
+                       'RELATIVE IMP': relative_imp_column})
+    print(df)
+    return
+   
 if __name__ == '__main__':
     main()
