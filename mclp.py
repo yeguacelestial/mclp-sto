@@ -348,7 +348,27 @@ def read_data(file):
     
     candidate_sites_coordinates = list(zip(candidate_sites_x, candidate_sites_y))
 
+    # Plot input
+    plot_input(population_coordinates, candidate_sites_coordinates)
+
     return population_coordinates, candidate_sites_coordinates
+
+
+def plot_input(population_coordinates, candidate_sites_coordinates):
+    population_coordinates = array(population_coordinates)
+    candidate_sites_coordinates = array(candidate_sites_coordinates)
+
+    from matplotlib import pyplot as plt
+
+    fig = plt.figure(figsize=(8,8))
+    plt.scatter(population_coordinates[:,0], population_coordinates[:,1], c='C0', s=1)
+    plt.scatter(candidate_sites_coordinates[:,0], candidate_sites_coordinates[:, 1], c='red')
+    ax = plt.gca()
+    ax.axis('equal')
+    ax.tick_params(axis='both', left=False, top=False, right=False,
+                    bottom=False, labelleft=False, labeltop=False,
+                    labelright=False, labelbottom=False)
+    plt.show()
 
 
 def mclp_ga(population_points, candidate_sites_points, number_sites_to_select, radius, instance_name):
