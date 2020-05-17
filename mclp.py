@@ -278,7 +278,7 @@ def mclp(number_of_sites, radius, instance_file):
     candidate_sites_coordinates = data[1]
 
     # Plot input
-    plot_input(population_coordinates, candidate_sites_coordinates)
+    plot_input(population_coordinates, candidate_sites_coordinates, instance_file)
 
     # Start CH timer
     ch_time_start = time.clock()
@@ -321,7 +321,7 @@ def mclp(number_of_sites, radius, instance_file):
     print("--------------------------------------------------------------\n\n")
 
     # Plot Output
-    plot_output(population_coordinates, candidate_sites_coordinates, ch_objF_sites, ch_objF_value, ls_objF_sites, ls_objF_value, radius)
+    plot_output(population_coordinates, candidate_sites_coordinates, ch_objF_sites, ch_objF_value, ls_objF_sites, ls_objF_value, radius, instance_file)
 
     # Start GA timer
     #ga_time_start = time.clock()
@@ -359,7 +359,7 @@ def read_data(file):
     return population_coordinates, candidate_sites_coordinates
 
 
-def plot_input(population_coordinates, candidate_sites_coordinates):
+def plot_input(population_coordinates, candidate_sites_coordinates, instance_file):
     population_coordinates = array(population_coordinates)
     candidate_sites_coordinates = array(candidate_sites_coordinates)
 
@@ -372,7 +372,7 @@ def plot_input(population_coordinates, candidate_sites_coordinates):
     plt.scatter(candidate_sites_coordinates[:,0], candidate_sites_coordinates[:, 1], c='red')
     ax = plt.gca()
 
-    ax.set_title(f'Population/Demand color: Blue\nCandidate sites color: Red')
+    ax.set_title(f'{instance_file}\nPopulation/Demand color: Blue\nCandidate sites color: Red', fontsize=9)
 
     ax.axis('equal')
     ax.tick_params(axis='both', left=True, top=False, right=False,
@@ -701,7 +701,7 @@ def mclp_ls(objF_value, objF_sites, free_sites, sites_with_objF):
         return objF_sites, objF_value
 
 
-def plot_output(population_coordinates, candidate_sites_coordinates, ch_objF_sites, ch_objF_value, ls_objF_sites, ls_objF_value, radius):
+def plot_output(population_coordinates, candidate_sites_coordinates, ch_objF_sites, ch_objF_value, ls_objF_sites, ls_objF_value, radius, instance_file):
     population_coordinates = array(population_coordinates)
     candidate_sites_coordinates = array(candidate_sites_coordinates)
 
@@ -712,7 +712,7 @@ def plot_output(population_coordinates, candidate_sites_coordinates, ch_objF_sit
     plt.scatter(candidate_sites_coordinates[:,0], candidate_sites_coordinates[:,1], c='red')
     ax = plt.gca()
 
-    ax.set_title('CH Sites: Green\nLS Sites: Black')
+    ax.set_title(f'{instance_file}\nCH Sites: Green\nLS Sites: Black', fontsize=9)
 
     # Mark CH sites
     for site in ch_objF_sites:
