@@ -321,7 +321,7 @@ def mclp(number_of_sites, radius, instance_file):
     print("--------------------------------------------------------------\n\n")
 
     # Plot Output
-    plot_output(population_coordinates, candidate_sites_coordinates, ch_objF_sites, ls_objF_sites, radius)
+    plot_output(population_coordinates, candidate_sites_coordinates, ch_objF_sites, ch_objF_value, ls_objF_sites, ls_objF_value, radius)
 
     # Start GA timer
     #ga_time_start = time.clock()
@@ -694,15 +694,18 @@ def mclp_ls(objF_value, objF_sites, free_sites, sites_with_objF):
         return objF_sites, objF_value
 
 
-def plot_output(population_coordinates, candidate_sites_coordinates, ch_objF_sites, ls_objF_sites, radius):
+def plot_output(population_coordinates, candidate_sites_coordinates, ch_objF_sites, ch_objF_value, ls_objF_sites, ls_objF_value, radius):
     population_coordinates = array(population_coordinates)
     candidate_sites_coordinates = array(candidate_sites_coordinates)
 
     fig = plt.figure(figsize=(8,8))
+    fig.suptitle('RESULTS', fontsize=14, fontweight='bold')
 
     plt.scatter(population_coordinates[:,0], population_coordinates[:,1], c='C0', s=1)
     plt.scatter(candidate_sites_coordinates[:,0], candidate_sites_coordinates[:,1], c='red')
     ax = plt.gca()
+
+    ax.set_title('CH Sites: Green\nLS Sites: Black')
 
     # Mark CH sites
     for site in ch_objF_sites:
@@ -720,6 +723,7 @@ def plot_output(population_coordinates, candidate_sites_coordinates, ch_objF_sit
     ax.tick_params(axis='both',left=False, top=False, right=False,
                        bottom=False, labelleft=False, labeltop=False,
                        labelright=False, labelbottom=False)
+    ax.set_xlabel(f'CH - Objective Function: {ch_objF_value}\nLS - Objective Function: {ls_objF_value}')
     plt.show()
     return
 
