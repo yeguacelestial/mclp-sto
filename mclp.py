@@ -166,6 +166,7 @@ import os
 import pandas as pd
 import time
 
+from matplotlib import pyplot as plt
 from numpy import array
 from openpyxl import load_workbook
 from os import listdir
@@ -274,6 +275,8 @@ def mclp(number_of_sites, radius, instance_file):
     population_coordinates = data[0]
     candidate_sites_coordinates = data[1]
 
+    # Plot input
+    plot_input(population_coordinates, candidate_sites_coordinates)
 
     # Start CH timer
     ch_time_start = time.clock()
@@ -315,6 +318,9 @@ def mclp(number_of_sites, radius, instance_file):
     print(f"[+] Execution time => {ls_time_elapsed}")
     print("--------------------------------------------------------------\n\n")
 
+    # Plot Output
+    plot_output(population_coordinates, candidate_sites_coordinates, ch_objF_sites, ls_objF_sites, radius)
+
     # Start GA timer
     #ga_time_start = time.clock()
 
@@ -347,9 +353,6 @@ def read_data(file):
     candidate_sites_y = candidate_sites_df['y'].tolist()
     
     candidate_sites_coordinates = list(zip(candidate_sites_x, candidate_sites_y))
-
-    # Plot input
-    plot_input(population_coordinates, candidate_sites_coordinates)
 
     return population_coordinates, candidate_sites_coordinates
 
@@ -687,6 +690,28 @@ def mclp_ls(objF_value, objF_sites, free_sites, sites_with_objF):
     else:
         print("[-] Solution couldn't be improved.")
         return objF_sites, objF_value
+
+
+def plot_output(population_coordinates, candidate_sites_coordinates, ch_objF_sites, ls_objF_sites, radius):
+    population_coordinates = array(population_coordinates)
+    candidate_sites_coordinates = array(candidate_sites_coordinates)
+
+    fig = plt.figure(figsize=(8,8))
+    plt.scatter(population_coordinates[:,0], population_coordinates[:,1], c='C0', s=1)
+    plt.scatter(candidate_sites_coordinates[:,0], candidate_sites_coordinates[:,1], c='red')
+    ax = plt.gca()
+
+    for site in ch_objF_sites:
+        plt.scatter(candidate_sites_coordinates[site,0], candidate_sites_coordinates[site,1], c='green')
+        circle = plt.Circle(candidate_sites_coordinates[site], radius, color='black', fill=False, lw=2)
+        ax.add_artist(circle)
+
+    ax.axis('equal')
+    ax.tick_params(axis='both',left=False, top=False, right=False,
+                       bottom=False, labelleft=False, labeltop=False,
+                       labelright=False, labelbottom=False)
+    plt.show()
+    return
 
 
 def computational_results(instances_dict):
