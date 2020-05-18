@@ -245,6 +245,8 @@ def main():
         print("[-] Error: input couldn't be read.")
         print("[*] Use 'mclp.py -h' for usage info.")
 
+    except ZeroDivisionError:
+        print(f"[-] Error: instance {instance_file} problem is not feasible.")
     except Exception as e:
         print("[-] Error: something went wrong.")
         raise
@@ -730,7 +732,7 @@ def plot_output(population_coordinates, candidate_sites_coordinates, ch_objF_sit
     ax.tick_params(axis='both',left=True, top=False, right=False,
                        bottom=True, labelleft=True, labeltop=False,
                        labelright=False, labelbottom=True)
-    ax.set_xlabel(f'CH - Objective Function: {ch_objF_value}\nLS - Objective Function: {ls_objF_value}')
+    ax.set_xlabel(f'Radius: {radius}\nCH - Objective Function: {ch_objF_value}\nLS - Objective Function: {ls_objF_value}')
     plt.show()
     return
 
