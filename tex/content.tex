@@ -181,36 +181,48 @@ In general, the objective of Local Search moves is to improve a given solution. 
 	\DontPrintSemicolon
 
 	\KwInput{\begin{itemize}
-		\item $I \gets [1,2,3...i]$
-		\item $J \gets [1,2,3...j]$
-		\item $S \gets int \ value$
-		\item $radius \gets int \ value$
+		\item $objF\_value \gets current \ objective \ function$
+		\item $objF\_sites \gets [1,2,3...S]$
+		\item $free\_sites \gets [1,2,3...j] \ from \ J \ not \ in S$
+		\item $sites\_with\_obj\_F \gets $ \big\{j in J: obj\_F of j\} dict
 	\end{itemize}}
 	\KwOutput{\begin{itemize}
-		\item $selected\_sites \gets [1,2,3...S]$
-		\item $objective\_function \gets Population \ covered \ by \ selected\_sites$
+		\item $new\_sites\_set \gets [1,2,3...new(S)]$
+		\item $new\_objF \gets Population \ covered \ by \ new\_sites\_set$
 	\end{itemize}}
 	\KwResult{}
-	$selected\_sites \gets []$\;
-	$population\_size \gets length(I)$\;
-
-	\For{$site$ \KwBy $J$}{
-		$current\_covered\_nodes \gets Compute \ covered \ nodes (selected\_sites)$\;
-		$objective\_function = length(current\_covered\_nodes)
-		$\;
-		$r1 = covered\_nodes(under \ radius(site)) > 0$\;
-		$r2 = length(selected\_sites) < S$\;
-		$r3 = objective\_function < population\_size$\;
-		\uIf{(r1 and r2 and r3) == True}{
-			$Append \ site \ to \ selected\_sites$\;
-		}\uElseIf{r1 == False}{
+	$objF\_copy \gets copy(objF\_value)$\;
+	$objF\_sites\_copy \gets copy(objF\_sites)$\;
+	$free\_sites\_copy \gets copy(free\_sites)$\;
+	$sites\_with\_objF\_copy \gets copy(sites\_with\_objF)$\;
+	\BlankLine
+	\BlankLine
+	\For{$site$ \KwBy $objF\_sites\_copy$}{
+		$site\_objF \gets sites\_with\_objF\_copy[site]$\;
+		\BlankLine
+		
+		\For{$free\_site$ \KwBy $free\_sites\_copy$}{
+			$free\_site\_objF = sites\_with\_objF\_copy[free\_site]$\;
+			\BlankLine
+			\uIf{free\_site\_objF > site\_objF}{
+				$objF\_sites\_copy[site] \gets free\_site$\;
+			}
+			\uElse{
 			$pass$\;
-		}\uElse{
-			$return \ selected\_sites,\ objective\_function$\;
-			$break \ for$\;
+			}
 		}
 	}
-
+	\BlankLine
+	\BlankLine
+	$new\_sites\_set \gets objF\_sites\_copy$\;
+	$new\_objF \gets Population \ covered \ by \ new\_sites\_set$\;
+	\BlankLine
+	\uIf{free\_site\_objF > site\_objF}{
+		$return \ new\_sites\_set, new\_objF$\;
+	}
+	\uElse{
+		$print \ "Solution \ couldn't \ be \ improved"$\;
+	}
 \end{algorithm}
 
 \section{Experiments}\label{sec:conc} 
