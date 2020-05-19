@@ -97,12 +97,18 @@ The scatter plot shown in the figure ~\ref{fig:example_instance_input} was gener
 
 As shown, the population points are illustrated in the scatter plot in blue, and the potential candidate sites are filled with red.
 
-Once the input is succesfully computed, there are a few ways to figure out a first feasible solution. As seen in Church and ReVelle 1974, a first heuristic approach called Greedy Adding (GA) was considered. This approach starts with an empty solution, and starts to iterate each candidate site until the one with maximal covered population is found; then, this site is added to the solution. It keeps iterating until either the $S$ facilities have been selected or all the population is covered. However, there is a problem with this approach: the time complexity is denoted as $O(n \ logn)$, which means that it's not very efficient for big instances.
+Once the input is succesfully computed, there are a few ways to figure out a first feasible solution. As seen in Church and ReVelle 1974, a first heuristic approach called Greedy Adding (GA) was considered. This approach starts with an empty solution, and starts to iterate each candidate site until the one with maximal covered population is found; then, this site is added to the solution. It keeps iterating until either the $S$ facilities have been selected or all the population is covered. However, there is a problem with this approach: the time complexity is denoted as $O(n \ logn)$, which means that it's not efficient for big instances.
 
-\subsection{How to cite?}
-Citations are referred in the text using \verb|\citet| command which produces citations
-as though they are part of the text. In order to say somebody did this work as a part of a line use:~ Voet and Voet have done extensive work on .... This will produce~\citet{voet2011biochemistry} have done extensive work on .... Alternately citations can appear in parenthesis. The command~\citep{voet2011biochemistry} is used to automatically put the citations in parenthesis. As an example consider the extensive work done in the area of book writing~\citep{seifert1991shape}.
-Article~\citep{sircar1972adsorption,keh1995particle} and collection of work~\citep{seifert1995morphology} are the other examples.
+Instead of using the Greedy Adding algorithm proposed by these guys, a Constructive Heuristic approach was implemented for generating first a feasible solution that meet the constraints. Then, a Local Search move approach tries to improve this solution. These heuristics are discused in more detail on the following sections.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.8]{example_instance_output.png}
+	\caption{Random instance of population and candidate sites points}
+	\label{fig:example_instance_output}
+\end{figure}
+
+The scatter plot shown in the figure ~\ref{fig:example_instance_output} illustrates the output of the applied heuristics mentioned previously. The sites and population covered of the Constructive Heuristic approach are marked with green circles, and black circles illustrate the ones covered by Local Search. 
 
 \section{Heuristics}\label{sec:exp}
 
@@ -111,12 +117,6 @@ An experiment is a procedure carried out to support, refute, or validate a hypot
 
 A child may carry out basic experiments to understand gravity, while teams of scientists may take years of systematic investigation to advance their understanding of a phenomenon. Experiments and other types of hands-on activities are very important to student learning in the science classroom. Experiments can raise test scores and help a student become more engaged and interested in the material they are learning, especially when used over time. Experiments can vary from personal and informal natural comparisons (e.g. tasting a range of chocolates to find a favorite), to highly controlled (e.g. tests requiring complex apparatus overseen by many scientists that hope to discover information about subatomic particles). Uses of experiments vary considerably between the natural and human sciences. Fig.~\ref{fig:parabolic} is the parabolic plot.
 
-\begin{figure}
-	\centering
-	% \includegraphics[width=0.45\linewidth]{parabolic}
-	\caption{Caption of fig. 1.}
-	\label{fig:parabolic}
-\end{figure}
 
 \subsubsection{First subsubsection}
 An experiment usually tests a hypothesis, which is an expectation about how a particular process or phenomenon works. However, an experiment may also aim to answer a ``what-if'' question, without a specific expectation about what the experiment reveals, or to confirm prior results. If an experiment is carefully conducted, the results usually either support or disprove the hypothesis. According to some philosophies of science, an experiment can never "prove" a hypothesis, it can only add support. On the other hand, an experiment that provides a counterexample can disprove a theory or hypothesis, but a theory can always be salvaged by appropriate ad hoc modifications at the expense of simplicity. An experiment must also control the possible confounding factors—any factors that would mar the accuracy or repeatability of the experiment or the ability to interpret the results. Confounding is commonly eliminated through scientific controls and/or, in randomized experiments, through random assignment.
