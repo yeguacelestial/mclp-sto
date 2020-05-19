@@ -122,7 +122,56 @@ The implementation of the Constructive Heuristic made for this problem receives 
 The Constructive Heuristic implemented for the MCLP is described in the Alg. ~\ref{pseudo: ch}.
 
 \begin{algorithm}[H]
-	\caption{Constructive Heuristic pseudocode}\label{pseudo: ch}
+	\caption{Constructive Heuristic}\label{pseudo: ch}
+	\SetAlgoLined
+	\SetKwInput{KwInput}{Input}
+	\SetKwInput{KwOutput}{Output}
+	\SetKwInput{KwResult}{Pseudocode}
+	\SetKw{KwBy}{in}
+
+	\KwInput{\begin{itemize}
+		\item $I \gets [1,2,3...i]$
+		\item $J \gets [1,2,3...j]$
+		\item $S \gets int \ value$
+		\item $radius \gets int \ value$
+	\end{itemize}}
+	\KwOutput{\begin{itemize}
+		\item $selected\_sites \gets [1,2,3...S]$
+		\item $objective\_function \gets Population \ covered \ by \ selected\_sites$
+	\end{itemize}}
+	\KwResult{}
+	$selected\_sites \gets []$\;
+	$population\_size \gets length(I)$\;
+	\BlankLine
+	\BlankLine
+	\For{$site$ \KwBy $J$}{
+		$current\_covered\_nodes \gets Compute \ covered \ nodes (selected\_sites)$\;
+		$objective\_function = length(current\_covered\_nodes)
+		$\;
+		\BlankLine
+		$r1 = covered\_nodes(under \ radius(site)) > 0$\;
+		$r2 = length(selected\_sites) < S$\;
+		$r3 = objective\_function < population\_size$\;
+		\BlankLine
+		\uIf{(r1 and r2 and r3) == True}{
+			$Append \ site \ to \ selected\_sites$\;
+		}\uElseIf{r1 == False}{
+			$pass$\;
+		}\uElse{
+			$return \ selected\_sites,\ objective\_function$\;
+			$break \ for$\;
+		}
+	}
+	
+\end{algorithm}
+
+\subsection{Description of Local Search}
+Before describing the move of the Local Search (LS) algorithm used on this problem, it's important to know what a Local Search is; the main thing that differs between Local Search and Constructive heuristics is that Local Search needs a starting solution, whereas Constructive heursitics starts with a empty solution and build it from scratch. 
+
+In general, the objective of Local Search moves is to improve a given solution. Best-found strategy was used in the LS implementation for the MCLP, described in the following algorithm.
+
+\begin{algorithm}
+	\caption{Local Search heuristic}
 	\SetAlgoLined
 	\SetKwInput{KwInput}{Input}
 	\SetKwInput{KwOutput}{Output}
@@ -159,13 +208,8 @@ The Constructive Heuristic implemented for the MCLP is described in the Alg. ~\r
 			$break \ for$\;
 		}
 	}
-	
+
 \end{algorithm}
-
-\subsection{Description of Local Search}
-Before describing the move of the Local Search (LS) algorithm used on this problem, it's important to know what a Local Search is; the main thing that differs between Local Search and Constructive heuristics is that Local Search needs a starting solution, whereas Constructive heursitics starts with a empty solution and build it from scratch. 
-
-In general, the objective of Local Search moves is to improve a given solution. Best-found strategy was used in the LS implementation for the MCLP.
 
 \section{Experiments}\label{sec:conc} 
 Conclusions show readers the value of your completely developed argument or thoroughly answered question. Consider the conclusion from the reader's perspective. At the end of a paper, a reader wants to know how to benefit from the work you accomplished in your paper. 
