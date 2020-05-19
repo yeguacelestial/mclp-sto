@@ -12,6 +12,9 @@
 % \usepackage{algorithm}
 % \usepackage{algpseudocode}
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\usepackage{graphicx}
 
 \captionsetup{font={small, stretch=1}, labelfont=bf}
 \renewcommand{\figurename}{Fig.}
@@ -170,6 +173,8 @@ The Constructive Heuristic implemented for the MCLP is described in the Alg. ~\r
 Before describing the move of the Local Search (LS) algorithm used on this problem, it's important to know what a Local Search is; the main thing that differs between Local Search and Constructive heuristics is that Local Search needs a starting solution, whereas Constructive heursitics starts with a empty solution and build it from scratch. 
 
 In general, the objective of Local Search moves is to improve a given solution. Best-found strategy was used in the LS implementation for the MCLP, described in the alg. ~\ref{pseudo: ls}.
+\paragraph{$Move(j,k):$}
+Replace open facility $j$ (currently in objF\_sites[]) by a free candidate site $k$ (currently in free\_sites[]) 
 
 \begin{algorithm}
 	\caption{Local Search heuristic}\label{pseudo: ls}
@@ -225,8 +230,47 @@ In general, the objective of Local Search moves is to improve a given solution. 
 	}
 \end{algorithm}
 
-\section{Experiments}\label{sec:conc} 
-Conclusions show readers the value of your completely developed argument or thoroughly answered question. Consider the conclusion from the reader's perspective. At the end of a paper, a reader wants to know how to benefit from the work you accomplished in your paper. 
+\section{Experiments}
+Experiments and testing of implementations of Constructive and Local Search heuristics seen in alg. ~\ref{pseudo: ch} and alg. ~\ref{pseudo: ls} were coded on Python programming language, and they were tested on a computer with an Intel Core i7-6500u processor. Basic frequency of this processor is between 2.5-3.1 GHz.
+
+\begin{table}[h!]
+\centering
+\begin{adjustbox}{max width=\textwidth}
+% Pandas dataframe start
+\begin{tabular}{lrrrrrl}
+	\toprule
+			 INSTANCE &  CH\_OF &  CH\_time (cpu sec) &  LSH\_OF &  LS\_time (cpu sec) &  ABSOLUTE IMP & RELATIVE IMP \\
+	\midrule
+	  small500\_1.xlsx &     54 &           0.349726 &      63 &           0.000037 &             9 &       16.67\% \\
+	  small500\_2.xlsx &     73 &           0.036091 &      76 &           0.000232 &             3 &        4.11\% \\
+	  small500\_3.xlsx &     65 &           0.033529 &      69 &           0.000201 &             4 &        6.15\% \\
+	  small500\_4.xlsx &     61 &           0.032695 &      62 &           0.000249 &             1 &        1.64\% \\
+	  small500\_5.xlsx &     54 &           0.032827 &      63 &           0.000157 &             9 &       16.67\% \\
+	  small500\_6.xlsx &     68 &           0.014754 &      76 &           0.000169 &             8 &       11.76\% \\
+	  small500\_7.xlsx &     66 &           0.013740 &      73 &           0.000156 &             7 &       10.61\% \\
+	  small500\_8.xlsx &     64 &           0.013012 &      68 &           0.000172 &             4 &        6.25\% \\
+	  small500\_9.xlsx &     51 &           0.032844 &      71 &           0.000202 &            20 &       39.22\% \\
+	 small500\_10.xlsx &     54 &           0.015027 &      61 &           0.000120 &             7 &       12.96\% \\
+	 small500\_11.xlsx &     55 &           0.033229 &      59 &           0.000101 &             4 &        7.27\% \\
+	 small500\_12.xlsx &     47 &           0.016532 &      58 &           0.000529 &            11 &       23.40\% \\
+	 small500\_13.xlsx &     59 &           0.034043 &      74 &           0.000201 &            15 &       25.42\% \\
+	 small500\_14.xlsx &     49 &           0.033183 &      76 &           0.000244 &            27 &       55.10\% \\
+	 small500\_15.xlsx &     58 &           0.014746 &      78 &           0.000183 &            20 &       34.48\% \\
+	 small500\_16.xlsx &     44 &           0.015279 &      70 &           0.000199 &            26 &       59.09\% \\
+	 small500\_17.xlsx &     62 &           0.014306 &      71 &           0.000162 &             9 &       14.52\% \\
+	 small500\_18.xlsx &     49 &           0.013388 &      70 &           0.000186 &            21 &       42.86\% \\
+	 small500\_19.xlsx &     64 &           0.014963 &      66 &           0.000165 &             2 &        3.12\% \\
+	 small500\_20.xlsx &     72 &           0.014259 &      72 &           0.000110 &             0 &        0.00\% \\
+	\bottomrule
+	\end{tabular}	
+% Pandas dtaframe end
+
+\end{adjustbox}
+\caption{Small instances - Demand: 500[5-500], Candidate sites: 10, Selected sites: 4, Radius: 50}
+\label{tab:small_instances}
+\end{table}
+\centering
+Average improvement of instances of table ~\ref{tab:small_instances} = 19.57\%
 
 \section{Conclusions}
 Conclusions show readers the value of your completely developed argument or thoroughly answered question. Consider the conclusion from the reader's perspective. At the end of a paper, a reader wants to know how to benefit from the work you accomplished in your paper. 
