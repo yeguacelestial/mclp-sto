@@ -9,6 +9,9 @@
 \usepackage{caption,subcaption}
 \usepackage[sort&compress, numbers]{natbib}
 \usepackage{hyperref}
+% \usepackage{algorithm}
+% \usepackage{algpseudocode}
+\usepackage[ruled,vlined]{algorithm2e}
 
 \captionsetup{font={small, stretch=1}, labelfont=bf}
 \renewcommand{\figurename}{Fig.}
@@ -113,13 +116,26 @@ The scatter plot shown in the figure ~\ref{fig:example_instance_output} illustra
 \section{Heuristics}\label{sec:exp}
 
 \subsection{Description of Constructive Heuristic}
-An experiment is a procedure carried out to support, refute, or validate a hypothesis. Experiments provide insight into cause-and-effect by demonstrating what outcome occurs when a particular factor is manipulated. Experiments vary greatly in goal and scale, but always rely on repeatable procedure and logical analysis of the results. There also exists natural experimental studies.
+By definition, a constructive heuristic is a type of heuristic that starts with an empty solution and keeps extending with each iteration until a feasible solution is obtained.
 
-A child may carry out basic experiments to understand gravity, while teams of scientists may take years of systematic investigation to advance their understanding of a phenomenon. Experiments and other types of hands-on activities are very important to student learning in the science classroom. Experiments can raise test scores and help a student become more engaged and interested in the material they are learning, especially when used over time. Experiments can vary from personal and informal natural comparisons (e.g. tasting a range of chocolates to find a favorite), to highly controlled (e.g. tests requiring complex apparatus overseen by many scientists that hope to discover information about subatomic particles). Uses of experiments vary considerably between the natural and human sciences. Fig.~\ref{fig:parabolic} is the parabolic plot.
-
+\begin{algorithm}[H]
+	\caption{Constructive Heuristic algorithm}
+	\SetAlgoLined
+	\KwResult{Write here the result}
+	initialization\;
+	\While{While condition}{
+		instructions\;
+	\eIf{condition}{
+		instructions1\;
+		instructions2\;
+	}{
+		instructions3\;
+	}
+	}
+	\caption{How to write algorithms}
+\end{algorithm}
 
 \subsubsection{First subsubsection}
-An experiment usually tests a hypothesis, which is an expectation about how a particular process or phenomenon works. However, an experiment may also aim to answer a ``what-if'' question, without a specific expectation about what the experiment reveals, or to confirm prior results. If an experiment is carefully conducted, the results usually either support or disprove the hypothesis. According to some philosophies of science, an experiment can never "prove" a hypothesis, it can only add support. On the other hand, an experiment that provides a counterexample can disprove a theory or hypothesis, but a theory can always be salvaged by appropriate ad hoc modifications at the expense of simplicity. An experiment must also control the possible confounding factors—any factors that would mar the accuracy or repeatability of the experiment or the ability to interpret the results. Confounding is commonly eliminated through scientific controls and/or, in randomized experiments, through random assignment.
 
 In engineering and the physical sciences, experiments are a primary component of the scientific method. They are used to test theories and hypotheses about how physical processes work under particular conditions (e.g., whether a particular engineering process can produce a desired chemical compound). Typically, experiments in these fields focus on replication of identical procedures in hopes of producing identical results in each replication. Random assignment is uncommon.
 
@@ -127,7 +143,9 @@ In engineering and the physical sciences, experiments are a primary component of
 According to his explanation, a strictly controlled test execution with a sensibility for the subjectivity and susceptibility of outcomes due to the nature of man is necessary.
 
 \subsection{Description of Local Search}
-In engineering and the physical sciences, experiments are a primary component of the scientific method. They are used to test theories and hypotheses about how physical processes work under particular conditions (e.g., whether a particular engineering process can produce a desired chemical compound). Typically, experiments in these fields focus on replication of identical procedures in hopes of producing identical results in each replication. Random assignment is uncommon.
+Before describing the move of the Local Search (LS) algorithm used on this problem, it's important to know what a Local Search is; the main thing that differs between Local Search and Constructive heuristics is that Local Search needs a starting solution, whereas Constructive heursitics starts with a empty solution and build it from scratch. 
+
+In general, the objective of Local Search moves is to improve a given solution. Best-found strategy was used in the LS implementation for the MCLP.
 
 \section{Experiments}\label{sec:conc} 
 Conclusions show readers the value of your completely developed argument or thoroughly answered question. Consider the conclusion from the reader's perspective. At the end of a paper, a reader wants to know how to benefit from the work you accomplished in your paper. 
