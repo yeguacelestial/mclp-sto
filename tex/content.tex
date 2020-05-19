@@ -118,57 +118,49 @@ The scatter plot shown in the figure ~\ref{fig:example_instance_output} illustra
 \subsection{Description of Constructive Heuristic}
 By definition, a constructive heuristic is a type of heuristic that starts with an empty solution and keeps extending with each iteration until a feasible solution is obtained.
 
+The implementation of the Constructive Heuristic made for this problem receives as input the demand points $I$, the potential candidate sites $J$, the desired sites to be selected $S$ and the $radius$ of coverage.
+The Constructive Heuristic implemented for the MCLP is described in the Alg. ~\ref{pseudo: ch}.
+
 \begin{algorithm}[H]
 	\caption{Constructive Heuristic pseudocode}\label{pseudo: ch}
 	\SetAlgoLined
 	\SetKwInput{KwInput}{Input}
 	\SetKwInput{KwOutput}{Output}
+	\SetKwInput{KwResult}{Pseudocode}
+	\SetKw{KwBy}{in}
 
 	\KwInput{\begin{itemize}
-		\item $population\_points \gets [1,2,3...i]$
-		\item $candidate\_sites\_points \gets [1,2,3...j]$
-		\item $number\_sites\_to\_select \gets int \ value$
+		\item $I \gets [1,2,3...i]$
+		\item $J \gets [1,2,3...j]$
+		\item $S \gets int \ value$
 		\item $radius \gets int \ value$
 	\end{itemize}}
 	\KwOutput{\begin{itemize}
 		\item $selected\_sites \gets [1,2,3...S]$
-		\item $number\_of\_covered\_nodes \gets int \ value$
+		\item $objective\_function \gets Population \ covered \ by \ selected\_sites$
 	\end{itemize}}
-	\KwResult{Write here the result}
-	initialization\;
-	\While{While condition}{
-		instructions\;
-	\eIf{condition}{
-		instructions1\;
-		instructions2\;
-	}{
-		instructions3\;
+	\KwResult{}
+	$selected\_sites \gets []$\;
+	$population\_size \gets length(I)$\;
+
+	\For{$site$ \KwBy $J$}{
+		$current\_covered\_nodes \gets Compute \ covered \ nodes (selected\_sites)$\;
+		$objective\_function = length(current\_covered\_nodes)
+		$\;
+		$r1 = covered\_nodes(under \ radius(site)) > 0$\;
+		$r2 = length(selected\_sites) < S$\;
+		$r3 = objective\_function < population\_size$\;
+		\uIf{(r1 and r2 and r3) == True}{
+			$Append \ site \ to \ selected\_sites$\;
+		}\uElseIf{r1 == False}{
+			$pass$\;
+		}\uElse{
+			$return \ selected\_sites,\ objective\_function$\;
+			$break \ for$\;
+		}
 	}
-	}
+	
 \end{algorithm}
-
-\begin{algorithm}[H]
-	\caption{How to write algorithms}
-	\SetAlgoLined
-	\KwResult{Write here the result}
-	initialization\;
-	\While{While condition}{
-		instructions\;
-	\eIf{condition}{
-		instructions1\;
-		instructions2\;
-	}{
-		instructions3\;
-	}
-	}
-\end{algorithm}
-
-\subsubsection{First subsubsection}
-
-In engineering and the physical sciences, experiments are a primary component of the scientific method. They are used to test theories and hypotheses about how physical processes work under particular conditions (e.g., whether a particular engineering process can produce a desired chemical compound). Typically, experiments in these fields focus on replication of identical procedures in hopes of producing identical results in each replication. Random assignment is uncommon.
-
-\paragraph{Paragraph tile.}
-According to his explanation, a strictly controlled test execution with a sensibility for the subjectivity and susceptibility of outcomes due to the nature of man is necessary.
 
 \subsection{Description of Local Search}
 Before describing the move of the Local Search (LS) algorithm used on this problem, it's important to know what a Local Search is; the main thing that differs between Local Search and Constructive heuristics is that Local Search needs a starting solution, whereas Constructive heursitics starts with a empty solution and build it from scratch. 
