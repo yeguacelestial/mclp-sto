@@ -169,10 +169,10 @@ The Constructive Heuristic implemented for the MCLP is described in the Alg. ~\r
 \subsection{Description of Local Search}
 Before describing the move of the Local Search (LS) algorithm used on this problem, it's important to know what a Local Search is; the main thing that differs between Local Search and Constructive heuristics is that Local Search needs a starting solution, whereas Constructive heursitics starts with a empty solution and build it from scratch. 
 
-In general, the objective of Local Search moves is to improve a given solution. Best-found strategy was used in the LS implementation for the MCLP, described in the following algorithm.
+In general, the objective of Local Search moves is to improve a given solution. Best-found strategy was used in the LS implementation for the MCLP, described in the alg. ~\ref{pseudo: ls}.
 
 \begin{algorithm}
-	\caption{Local Search heuristic}
+	\caption{Local Search heuristic}\label{pseudo: ls}
 	\SetAlgoLined
 	\SetKwInput{KwInput}{Input}
 	\SetKwInput{KwOutput}{Output}
