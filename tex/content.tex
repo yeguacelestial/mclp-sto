@@ -230,6 +230,7 @@ Replace open facility $j$ (currently in objF\_sites[]) by a free candidate site 
 	}
 \end{algorithm}
 
+\newpage
 \section{Experiments}
 Experiments and testing of implementations of Constructive and Local Search heuristics seen in alg. ~\ref{pseudo: ch} and alg. ~\ref{pseudo: ls} were coded on Python programming language, and they were tested on a computer with an Intel Core i7-6500u processor. Basic frequency of this processor is between 2.5-3.1 GHz.
 
@@ -315,15 +316,40 @@ Experiments and testing of implementations of Constructive and Local Search heur
 	\centering
 	\begin{adjustbox}{max width=\textwidth}
 	% Pandas dataframe start
+	\begin{tabular}{lrrrrrl}
+		\toprule
+				   INSTANCE &  CH\_OF &  CH\_time (cpu sec) &  LSH\_OF &  LS\_time (cpu sec) &  ABSOLUTE IMP & RELATIVE IMP \\
+		\midrule
+		  large10000\_1.xlsx &   3582 &           2.880030 &    3873 &           0.000139 &           291 &        8.12\% \\
+		  large10000\_2.xlsx &   3825 &           2.851862 &    4041 &           0.000103 &           216 &        5.65\% \\
+		  large10000\_3.xlsx &   3528 &           2.858097 &    3899 &           0.000088 &           371 &       10.52\% \\
+		  large10000\_4.xlsx &   3113 &           2.768064 &    3330 &           0.000090 &           217 &        6.97\% \\
+		  large10000\_5.xlsx &   3751 &           2.967234 &    3955 &           0.000143 &           204 &        5.44\% \\
+		  large10000\_6.xlsx &   3001 &           2.931466 &    3140 &           0.000120 &           139 &        4.63\% \\
+		  large10000\_7.xlsx &   3599 &           2.907708 &    3705 &           0.000105 &           106 &        2.95\% \\
+		  large10000\_8.xlsx &   3882 &           2.686900 &    4013 &           0.000148 &           131 &        3.37\% \\
+		  large10000\_9.xlsx &   3298 &           2.898382 &    3387 &           0.000085 &            89 &        2.70\% \\
+		 large10000\_10.xlsx &   2734 &           2.731435 &    2942 &           0.000169 &           208 &        7.61\% \\
+		 large10000\_11.xlsx &   4031 &           3.139189 &    4103 &           0.000099 &            72 &        1.79\% \\
+		 large10000\_12.xlsx &   3515 &           2.914604 &    3661 &           0.000090 &           146 &        4.15\% \\
+		 large10000\_13.xlsx &   3505 &           3.009856 &    3697 &           0.000121 &           192 &        5.48\% \\
+		 large10000\_14.xlsx &   3307 &           2.829949 &    3456 &           0.000105 &           149 &        4.51\% \\
+		 large10000\_15.xlsx &   3846 &           3.067337 &    3983 &           0.000141 &           137 &        3.56\% \\
+		 large10000\_16.xlsx &   3238 &           3.004198 &    3349 &           0.000083 &           111 &        3.43\% \\
+		 large10000\_17.xlsx &   3339 &           3.088515 &    3623 &           0.000113 &           284 &        8.51\% \\
+		 large10000\_18.xlsx &   3836 &           2.865598 &    4018 &           0.000088 &           182 &        4.74\% \\
+		 large10000\_19.xlsx &   3584 &           2.766983 &    3656 &           0.000083 &            72 &        2.01\% \\
+		 large10000\_20.xlsx &   3513 &           2.998733 &    3636 &           0.000113 &           123 &        3.50\% \\
+		\bottomrule
+		\end{tabular}		
 	% Pandas dtaframe end
 \end{adjustbox}
-\caption{Large instances - Demand: 500[5-500], Candidate sites: 10, Selected sites: 4, Radius: 50,\\ \centering Avg. improvement = \%}
-\label{tab:medium_instances}
+\caption{Large instances - Demand: 10000[5-1000], Candidate sites: 50, Selected sites: 15, Radius: 100,\\ \centering Avg. improvement = 4.98\%}
+\label{tab:large_instances}
 \end{table}
 
-
 \section{Conclusions}
-Conclusions show readers the value of your completely developed argument or thoroughly answered question. Consider the conclusion from the reader's perspective. At the end of a paper, a reader wants to know how to benefit from the work you accomplished in your paper. 
+At first, it's tempting to say that implementing constructive and local search may be easy. Often, we assume that every problem can be solved. But then we have the NP-hard complete problems. The most important things of a good algorithm are efficiency and time complexity; however, the Maximal Covering Location Problems can be solved by a few approaches that are not necessarily exponential, but those are not as efficient as the heuristics presented on this paper. When constructive and local search heuristics are joined together on a set location problem as MCLP, the results are really good and easy to compute.
 
 \appendix
 \section{Supporting information}
