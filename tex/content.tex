@@ -119,7 +119,36 @@ The scatter plot shown in the figure ~\ref{fig:example_instance_output} illustra
 By definition, a constructive heuristic is a type of heuristic that starts with an empty solution and keeps extending with each iteration until a feasible solution is obtained.
 
 \begin{algorithm}[H]
-	\caption{Constructive Heuristic algorithm}
+	\caption{Constructive Heuristic pseudocode}\label{pseudo: ch}
+	\SetAlgoLined
+	\SetKwInput{KwInput}{Input}
+	\SetKwInput{KwOutput}{Output}
+
+	\KwInput{\begin{itemize}
+		\item $population\_points \gets [1,2,3...i]$
+		\item $candidate\_sites\_points \gets [1,2,3...j]$
+		\item $number\_sites\_to\_select \gets int \ value$
+		\item $radius \gets int \ value$
+	\end{itemize}}
+	\KwOutput{\begin{itemize}
+		\item $selected\_sites \gets [1,2,3...S]$
+		\item $number\_of\_covered\_nodes \gets int \ value$
+	\end{itemize}}
+	\KwResult{Write here the result}
+	initialization\;
+	\While{While condition}{
+		instructions\;
+	\eIf{condition}{
+		instructions1\;
+		instructions2\;
+	}{
+		instructions3\;
+	}
+	}
+\end{algorithm}
+
+\begin{algorithm}[H]
+	\caption{How to write algorithms}
 	\SetAlgoLined
 	\KwResult{Write here the result}
 	initialization\;
@@ -132,7 +161,6 @@ By definition, a constructive heuristic is a type of heuristic that starts with 
 		instructions3\;
 	}
 	}
-	\caption{How to write algorithms}
 \end{algorithm}
 
 \subsubsection{First subsubsection}
