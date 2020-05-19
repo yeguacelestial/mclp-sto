@@ -187,7 +187,7 @@ def main():
         exit()
     
     instances_directory = options.directory
-    instances_directory = instances_directory.replace('/','')
+    #instances_directory = instances_directory.replace('/','')
     number_of_sites = options.sites
     radius = options.radius
 
@@ -382,7 +382,7 @@ def plot_input(population_coordinates, candidate_sites_coordinates, instance_fil
                     labelright=False, labelbottom=True)
 
     ax.set_xlabel(f'Population/Demand points: {len(population_coordinates)}\nCandidate sites: {len(candidate_sites_coordinates)}')
-    plt.show()
+    #plt.show()
 
 
 def mclp_ga(population_points, candidate_sites_points, number_sites_to_select, radius, instance_name):
@@ -733,7 +733,7 @@ def plot_output(population_coordinates, candidate_sites_coordinates, ch_objF_sit
                        bottom=True, labelleft=True, labeltop=False,
                        labelright=False, labelbottom=True)
     ax.set_xlabel(f'Radius: {radius}\nCH - Objective Function: {ch_objF_value}\nLS - Objective Function: {ls_objF_value}')
-    plt.show()
+    #plt.show()
     return
 
 
@@ -783,6 +783,7 @@ def computational_results(instances_dict):
                        'ABSOLUTE IMP': absolute_imp_column,
                        'RELATIVE IMP': relative_imp_column})
     df.index+=1
+    print(df.to_latex(index=False))
     print(df)
 
     return df
