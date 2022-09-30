@@ -3,7 +3,7 @@ colorama==0.4.3
 cycler==0.10.0
 et-xmlfile==1.0.1
 jdcal==1.4.1
-joblib==0.14.1
+joblib==1.2.0
 kiwisolver==1.2.0
 matplotlib==3.2.1
 numpy==1.18.3
